@@ -35,8 +35,8 @@ class GameManager:
 
                 # Remove all the space used by dynamic objects
                 for DO in self.listDOs:
-                    if DO.screen is not None:
-                        self.screen.fill((0, 0, 0), rect=DO.rect)
+                    if DO.rect is not None:
+                        pygame.draw.rect(self.screen, (0, 0, 0), DO.rect)
 
                 # Draw all dynamic objects
                 for DO in self.listDOs:
