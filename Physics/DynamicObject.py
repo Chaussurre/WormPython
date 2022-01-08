@@ -1,19 +1,26 @@
+import numpy as np
+import Globals
+
+
 class DynamicObject:
-    def __init__(self, screen, listDOs, position=(0, 0)):
+    def __init__(self, position=(0, 0)):
         self._rect = None
-        listDOs.append(self)
-        self.screen = screen
+        Globals.listDynamicObjects.append(self)
         self.x = 0
         self.y = 0
         self.position = position
 
     @property
+    def screenPosition(self):
+        return self.position[0], self.position[1]
+
+    @property
     def position(self):
-        return self.x, self.y
+        return np.array((self.x, self.y))
 
     @position.setter
     def position(self, value):
-        self.x, self.y = value
+        self.x, self.y = float(value[0]), float(value[1])
 
     @property
     def rect(self):
@@ -30,5 +37,4 @@ class DynamicObject:
         self.rect = self.draw()
 
     def move(self, direction):
-        self.x += direction[0]
-        self.y += direction[1]
+        self.position += direction
