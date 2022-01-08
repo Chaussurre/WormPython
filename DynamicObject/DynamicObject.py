@@ -28,3 +28,7 @@ class DynamicObject:
 
     def update(self):
         self.rect = self.draw()
+
+    def move(self, direction):
+        self.x += direction[0]
+        self.y += direction[1]

@@ -1,7 +1,6 @@
 import pygame
-
 from DynamicObject.DynamicObject import DynamicObject
-
+from Input import Input
 
 class Worm(DynamicObject):
 
@@ -13,6 +12,6 @@ class Worm(DynamicObject):
 
     def update(self):
         DynamicObject.update(self)
-        self.x += 1
+        self.move(Input.GetKeyBoardDirection())
 
 

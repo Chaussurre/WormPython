@@ -1,10 +1,7 @@
-"""Proof of concept gfxdraw example"""
-
 import pygame
 import pygame.gfxdraw
-
 from Worm import Worm
-
+from Input import Input
 
 class GameManager:
 
@@ -24,13 +21,15 @@ class GameManager:
         try:
             while running:
                 clock.tick(60)
+                Input.UpdateKeys()
                 event = pygame.event.poll()
                 while event.type != pygame.NOEVENT:
                     if event.type == pygame.QUIT:
                         running = False
                     if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_ESCAPE:
-                            running = False
+                        Input.SetKeyDown(event.key)
+                    if event.type == pygame.KEYUP:
+                        Input.SetKeyUp(event.key)
                     event = pygame.event.poll()
 
                 # Remove all the space used by dynamic objects
