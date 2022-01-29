@@ -1,3 +1,6 @@
+import random
+
+import numpy as np
 import pygame
 import pygame.gfxdraw
 
@@ -36,7 +39,7 @@ class GameManager:
             DO.update()
 
     def main(self):
-        Worm(position=(100, 100), velocity=(50, -50))
+        Worm(position=(100, 100), velocity=(50, -50)).impulse(np.array([50, -30]))
 
         pygame.display.flip()
         clock = pygame.time.Clock()
@@ -44,11 +47,8 @@ class GameManager:
             while self.running:
                 clock.tick(Globals.FrameRate)
                 self.UpdateEvents()
-
                 self.ClearDynamicObjects()
-
                 self.UpdateDynamicObjects()
-
                 pygame.display.flip()
         finally:
             pygame.quit()

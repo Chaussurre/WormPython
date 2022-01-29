@@ -1,6 +1,8 @@
 import Globals
-from Physics.DynamicObject import DynamicObject
 import numpy as np
+from Physics.DynamicObject import DynamicObject
+from Physics.Trajectory import Trajectory
+
 
 class PhysicObject(DynamicObject):
     def __init__(self, position=(0, 0), velocity=(0, 0), kinematic=False):
@@ -8,12 +10,18 @@ class PhysicObject(DynamicObject):
         Globals.listPhysicObjects.append(self)
         self.velocity = np.array((float(velocity[0]), float(velocity[1])))
         self.kinematic = kinematic
+        self.trajectory = None
 
     def update(self):
-        if not self.kinematic:
-            self.velocity += Globals.Gravity / Globals.FrameRate
-            self.position += self.velocity / Globals.FrameRate
+        if self.trajectory is None:
+            self.trajectory = Trajectory(startPosition=self.position)
+        print(self.position)
+        self.position = self.trajectory.GetNextPoint()
         DynamicObject.update(self)
+
+
+    def impulse(self, speed):
+        self.trajectory = Trajectory(startPosition=self.position, startVelocity=speed)
 
     def GetCollisions(self):
         return []
