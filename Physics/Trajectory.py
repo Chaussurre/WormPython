@@ -22,13 +22,13 @@ class Trajectory:
     def IsOver(self, time):
         return False
 
-    def print(self):
+    def print(self, color="red"):
         previousPos = self.GetPoint(self.time)
         predictTime = self.time
-        for i in range(5000):
-            predictTime += 1.0 / Globals.FrameRate
+        step = 10
+        for i in range(0, 5000, step):
+            predictTime += 1.0 / Globals.FrameRate * step
             nextPos = self.GetPoint(predictTime)
-            pygame.draw.line(Globals.Screen, start_pos=previousPos, end_pos=nextPos, color="red", width=3)
+            pygame.draw.line(Globals.Screen, start_pos=previousPos, end_pos=nextPos, color=color, width=3)
             previousPos = nextPos
 
-    

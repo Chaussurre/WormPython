@@ -22,19 +22,11 @@ class DynamicObject:
     def position(self, value):
         self.x, self.y = float(value[0]), float(value[1])
 
-    @property
-    def rect(self):
-        return self._rect
-
-    @rect.setter
-    def rect(self, value):
-        self._rect = value
-
     def draw(self):
-        return None
+        pass
 
     def update(self):
-        self.rect = self.draw()
+        self.draw()
 
     def move(self, direction):
         self.position += direction

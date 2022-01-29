@@ -8,5 +8,5 @@ class Worm(PhysicObject):
     def draw(self):
         pygame.draw.circle(Globals.Screen, "green", self.screenPosition, 10)
         pygame.draw.circle(Globals.Screen, "black", self.screenPosition, 12, 2)
-        return pygame.draw.circle(Globals.Screen, "white", self.screenPosition, 15, 3)
+        pygame.draw.circle(Globals.Screen, "white", self.screenPosition, 15, 3)
 

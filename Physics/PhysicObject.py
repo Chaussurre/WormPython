@@ -11,6 +11,7 @@ class PhysicObject(DynamicObject):
         self.velocity = np.array((float(velocity[0]), float(velocity[1])))
         self.kinematic = kinematic
         self.trajectory = None
+        self.impulse(velocity)
 
     def update(self):
         if self.trajectory is None:

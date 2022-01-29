@@ -28,18 +28,18 @@ class GameManager:
                 Input.SetKeyUp(event.key)
             event = pygame.event.poll()
 
-    # Remove from the screen all the space used by dynamic objects
-    def ClearDynamicObjects(self):
-        for DO in Globals.listDynamicObjects:
-            if DO.rect is not None:
-                pygame.draw.rect(Globals.Screen, (0, 0, 0), DO.rect)
-
     def UpdateDynamicObjects(self):
         for DO in Globals.listDynamicObjects:
             DO.update()
 
+    def PrintTrajectories(self, color="red"):
+        for PO in Globals.listPhysicObjects:
+            if PO.trajectory is not None:
+                PO.trajectory.print(color=color)
+
     def main(self):
-        Worm(position=(100, 100), velocity=(50, -50)).impulse(np.array([50, -30]))
+        Worm(position=(200, 100), velocity=np.array((50, -50)))
+        Worm(position=(350, 100), velocity=np.array((-50, -50)))
 
         pygame.display.flip()
         clock = pygame.time.Clock()
@@ -47,7 +47,8 @@ class GameManager:
             while self.running:
                 clock.tick(Globals.FrameRate)
                 self.UpdateEvents()
-                self.ClearDynamicObjects()
+                Globals.Screen.fill((0, 0, 0))
+                self.PrintTrajectories()
                 self.UpdateDynamicObjects()
                 pygame.display.flip()
         finally:
