@@ -1,5 +1,7 @@
 import numpy as np
 
+from Physics.Collision import Collision
+
 
 class Collider:
     def __init__(self, position, size):
@@ -12,8 +14,13 @@ class Collider:
         relative = point - center
         return np.linalg.norm(relative, 2) < self.size
 
-    def isColliding(self, otherCollider, center=None, otherCenter=None):
-        return np.linalg.norm(self.collisionDelta(otherCollider, center, otherCenter), 2) > 0
+    def getCollision(self, otherCollider, center=None, otherCenter=None):
+        delta = self.collisionDelta(otherCollider, center=center, otherCenter=otherCenter)
+        if np.linalg.norm(delta, 2) == 0:
+            return None
+        if center is None:
+            center = self.position
+        return Collision(self, otherCollider, delta, center)
 
     def collisionDelta(self, otherCollider, center=None, otherCenter=None):
         if center is None:

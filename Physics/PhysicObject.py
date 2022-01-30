@@ -37,8 +37,8 @@ class PhysicObject(DynamicObject):
 
         for x in Globals.listPhysicObjects:
             otherCenter = x.predictPositionAt(time)
-            if self.collider.isColliding(x.collider, center=center, otherCenter=otherCenter):
-                colliding.append(x)
-                print(time)
+            collision = self.collider.getCollision(x.collider, center=center, otherCenter=otherCenter)
+            if collision is not None:
+                colliding.append(collision)
 
         return colliding
