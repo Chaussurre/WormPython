@@ -5,6 +5,7 @@ import pygame
 import pygame.gfxdraw
 
 import Globals
+from Physics import Trajectory
 from Worm.Worm import Worm
 from Input import Input
 
@@ -39,7 +40,8 @@ class GameManager:
 
     def main(self):
         Worm(position=(200, 100), velocity=np.array((50, -50)))
-        Worm(position=(350, 100), velocity=np.array((-50, -50)))
+        Worm(position=(550, 100), velocity=np.array((-50, -50)))
+        Trajectory.UpdateTrajectories()
 
         pygame.display.flip()
         clock = pygame.time.Clock()
