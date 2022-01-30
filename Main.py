@@ -4,6 +4,7 @@ import pygame.gfxdraw
 
 import Globals
 from Physics import Trajectory
+from Physics.Terrain import Terrain
 from Worm.Worm import Worm
 from Input import Input
 
@@ -41,6 +42,8 @@ class GameManager:
         Worm(position=(550, 100), velocity=np.array((-50, -50)))
         Trajectory.UpdateTrajectories()
 
+        terrain = self.createTerrain()
+
         pygame.display.flip()
         clock = pygame.time.Clock()
         try:
@@ -49,10 +52,18 @@ class GameManager:
                 self.UpdateEvents()
                 Globals.Screen.fill((0, 0, 0))
                 self.PrintTrajectories()
+                terrain.draw()
                 self.UpdateDynamicObjects()
                 pygame.display.flip()
         finally:
             pygame.quit()
+
+    def createTerrain(self):
+        terrain = Terrain()
+        terrain.addNode((100, 500))
+        terrain.addNode((900, 500))
+        terrain.link(0, 1)
+        return terrain
 
 
 GameManager().main()
