@@ -67,7 +67,7 @@ class GameManager:
 
     def createTerrain(self):
         terrain = Terrain()
-        terrain.addNode((100, 500))
+        terrain.addNode((210, 500))
         terrain.addNode((900, 500))
         terrain.link(0, 1)
         return terrain

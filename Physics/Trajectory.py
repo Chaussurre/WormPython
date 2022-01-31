@@ -88,12 +88,12 @@ def UpdateTrajectories():
         for x in Globals.listPhysicObjects:
             x.trajectory.CheckTime(time)
 
-    end = 50
+    end = 0
     for x in Globals.listPhysicObjects:
         traj = x.trajectory.GetLastTrajectory()
         if traj.endTime > 50:
             traj.endTime = 50
-        if traj.endTime < end:
+        if traj.endTime > end:
             end = traj.endTime
     return end
 

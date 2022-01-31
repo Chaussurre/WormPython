@@ -63,10 +63,10 @@ class Terrain:
         for pos in self.nodes:
             relative = center - pos
             distance = np.linalg.norm(relative, 2)
-            size = -distance + Globals.TerrainSize
+            size = Globals.TerrainSize + collider.size - distance
 
             if size > 0 and distance > 0:
-                delta = relative / distance * size
+                delta = -relative / distance * size
                 return Collision(collider, None, delta, center)
 
         return None
