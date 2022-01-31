@@ -30,7 +30,7 @@ class Collider:
 
         relative = otherCenter - center
         distance = np.linalg.norm(relative, 2)
-        size = -distance + self.size + otherCollider.size
+        size = self.size + otherCollider.size - distance
         if size < 0 or distance == 0:
             return np.array((0, 0))
         return relative / distance * size

@@ -9,14 +9,9 @@ class Trajectory:
         self.startPosition = startPosition
         self.startVelocity = startVelocity
         self.startTime = startTime
-        self.time = startTime
         self.physicObject = physicObject
         self.endTime = float("inf")
         self.Next = None
-
-    def GetNextPoint(self):
-        self.time += 1.0 / Globals.FrameRate
-        return self.GetPoint(self.time)
 
     def GetPoint(self, time):
         if time > self.endTime:
@@ -41,10 +36,10 @@ class Trajectory:
             return time > self.endTime
         return self.Next.IsOver(time)
 
-    def print(self, color="red"):
-        previousPos = self.GetPoint(self.time)
-        predictTime = self.time
-        step = 20
+    def print(self, time, color="red"):
+        previousPos = self.GetPoint(time)
+        predictTime = time
+        step = 10
         currentTraj = self
         while predictTime > currentTraj.endTime and currentTraj.Next is not None:
             currentTraj = currentTraj.Next
@@ -58,34 +53,49 @@ class Trajectory:
             pygame.draw.line(Globals.Screen, start_pos=previousPos, end_pos=nextPos, color=color, width=3)
             previousPos = nextPos
 
+    def GetLastTrajectory(self):
+        if self.Next is None:
+            return self
+        return self.Next.GetLastTrajectory()
 
-    def findEnd(self):
+    def CheckTime(self, time):
         if self.physicObject is not None:
-            time = self.time
-            for i in range(5000):
-                time += 1.0 / Globals.FrameRate
+
+            if time > self.endTime:
+                if self.Next is not None:
+                    self.Next.CheckTime(time)
+            else:
                 collisions = self.physicObject.getCollisions(time)
                 if len(collisions) > 0:
                     normal = np.array((0.0, 0.0))
                     for c in collisions:
                         normal += c.delta
 
-                    self.Next = Trajectory(startPosition=self.GetPoint(time) + normal,
-                                           startVelocity=reflectVelocityOnNormal(self.GetVelocity(time), normal),
-                                           startTime=time,
-                                           physicObject=self.physicObject)
+                    newVel = reflectVelocityOnNormal(self.GetVelocity(time), normal) * Globals.Bounciness
+                    self.endTime = time
 
-                    return time
-        return float("inf")
-
-    def update(self):
-        self.endTime = self.findEnd()
+                    if np.linalg.norm(newVel, 2) > 20:
+                        self.Next = Trajectory(startPosition=self.GetPoint(time) - normal,
+                                               startVelocity=newVel,
+                                               startTime=time,
+                                               physicObject=self.physicObject)
 
 
 def UpdateTrajectories():
+    time = 0.0
+    while time < 50:
+        time += 1.0 / Globals.FrameRate
+        for x in Globals.listPhysicObjects:
+            x.trajectory.CheckTime(time)
+
+    end = 50
     for x in Globals.listPhysicObjects:
-        if x.trajectory is not None:
-            x.trajectory.update()
+        traj = x.trajectory.GetLastTrajectory()
+        if traj.endTime > 50:
+            traj.endTime = 50
+        if traj.endTime < end:
+            end = traj.endTime
+    return end
 
 
 def reflectVelocityOnNormal(velocity, normal):

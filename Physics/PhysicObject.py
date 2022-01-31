@@ -17,10 +17,9 @@ class PhysicObject(DynamicObject):
         self.collider = Collider(position, size)
         self.impulse(velocity)
 
-    def update(self):
-        if self.trajectory is None:
-            self.impulse(np.array((0, 0)))
-        self.position = self.trajectory.GetNextPoint()
+    def update(self, time):
+        if self.trajectory is not None:
+            self.position = self.trajectory.GetPoint(time)
         DynamicObject.update(self)
 
     def impulse(self, speed):
@@ -34,6 +33,10 @@ class PhysicObject(DynamicObject):
     def getCollisions(self, time):
         colliding = []
         center = self.predictPositionAt(time)
+
+        terrainCollision = Globals.Terrain.getCollision(self.collider, center)
+        if terrainCollision is not None:
+            colliding.append(terrainCollision)
 
         for x in Globals.listPhysicObjects:
             otherCenter = x.predictPositionAt(time)

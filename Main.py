@@ -12,8 +12,12 @@ class GameManager:
 
     def __init__(self):
         self.running = True
+        self.time = 0
+        self.endSimTime = 0
+        self.inputMode = False
         pygame.init()
-        Globals.Screen = pygame.display.set_mode((1000, 600))
+        Globals.Screen = pygame.display.set_mode(Globals.ScreenSize)
+        pygame.display.set_caption("Best worm game", "")
         Globals.Screen.fill((0, 0, 0))
 
     def UpdateEvents(self):
@@ -30,30 +34,33 @@ class GameManager:
 
     def UpdateDynamicObjects(self):
         for DO in Globals.listDynamicObjects:
-            DO.update()
+            DO.update(self.time)
 
-    def PrintTrajectories(self, color="red"):
+    def PrintTrajectories(self, time=0, color="red"):
         for PO in Globals.listPhysicObjects:
             if PO.trajectory is not None:
-                PO.trajectory.print(color=color)
+                PO.trajectory.print(time, color=color)
 
     def main(self):
-        Worm(position=(200, 100), velocity=np.array((50, -50)))
-        Worm(position=(550, 100), velocity=np.array((-50, -50)))
-        Trajectory.UpdateTrajectories()
+        Globals.Terrain = self.createTerrain()
 
-        terrain = self.createTerrain()
+        Worm(position=(200, 100), velocity=np.array((50, -50)))
+        Worm(position=(299, 100), velocity=np.array((-50, -50)))
 
         pygame.display.flip()
         clock = pygame.time.Clock()
+        self.setSimMode()
+
         try:
             while self.running:
                 clock.tick(Globals.FrameRate)
                 self.UpdateEvents()
                 Globals.Screen.fill((0, 0, 0))
-                self.PrintTrajectories()
-                terrain.draw()
-                self.UpdateDynamicObjects()
+                Globals.Terrain.draw()
+                if self.inputMode:
+                    self.runInputMode()
+                else:
+                    self.runSimMode()
                 pygame.display.flip()
         finally:
             pygame.quit()
@@ -64,6 +71,28 @@ class GameManager:
         terrain.addNode((900, 500))
         terrain.link(0, 1)
         return terrain
+
+    def setSimMode(self):
+        self.inputMode = False
+        self.endSimTime = Trajectory.UpdateTrajectories()
+
+    def runSimMode(self):
+        self.PrintTrajectories(self.time)
+        self.UpdateDynamicObjects()
+        self.time += 1.0 / Globals.FrameRate
+        if self.time >= self.endSimTime:
+            self.setInputMode()
+
+    def setInputMode(self):
+        for x in Globals.listPhysicObjects:
+            x.trajectory = None
+        self.inputMode = False
+        self.time = 0
+        print("ready for inputs")
+
+
+    def runInputMode(self):
+        pass
 
 
 GameManager().main()

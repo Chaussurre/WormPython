@@ -1,6 +1,8 @@
+import numpy as np
 import pygame
 
 import Globals
+from Physics.Collision import Collision
 
 
 class Terrain:
@@ -9,6 +11,7 @@ class Terrain:
         self.nodeLinks = []
 
     def addNode(self, position):
+        position = np.array(list(map(float, position)))
         self.nodes.append(position)
         self.nodeLinks.append([])
 
@@ -32,3 +35,38 @@ class Terrain:
 
         for l in self.edges:
             pygame.draw.line(Globals.Screen, "white", self.nodes[l[0]], self.nodes[l[1]], Globals.TerrainSize * 2)
+
+    def getCollision(self, collider, center=None):
+        if center is None:
+            center = collider.position
+
+        for line in self.edges:
+            start = self.nodes[line[0]]
+            lineUnit = self.nodes[line[1]] - start
+            lineSize = np.linalg.norm(lineUnit, 2)
+            lineUnit /= lineSize
+
+            relative = center - start
+            dot = np.linalg.multi_dot((relative, lineUnit))
+            if dot < 0 or dot > lineSize:
+                continue
+            projected = lineUnit * dot
+            normal = relative - projected
+            normalSize = np.linalg.norm(normal, 2)
+            deltaSize = Globals.TerrainSize + collider.size - normalSize
+            if deltaSize < 0 or normalSize == 0:
+                continue
+            normal /= normalSize
+            delta = -normal * deltaSize
+            return Collision(collider, None, delta, center)
+
+        for pos in self.nodes:
+            relative = center - pos
+            distance = np.linalg.norm(relative, 2)
+            size = -distance + Globals.TerrainSize
+
+            if size > 0 and distance > 0:
+                delta = relative / distance * size
+                return Collision(collider, None, delta, center)
+
+        return None
