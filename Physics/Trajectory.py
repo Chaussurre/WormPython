@@ -31,11 +31,6 @@ class Trajectory:
 
         return time * Globals.Gravity + self.startVelocity
 
-    def IsOver(self, time):
-        if self.Next is None:
-            return time > self.endTime
-        return self.Next.IsOver(time)
-
     def print(self, time, color="red"):
         previousPos = self.GetPoint(time)
         predictTime = time
@@ -64,6 +59,8 @@ class Trajectory:
             if time > self.endTime:
                 if self.Next is not None:
                     self.Next.CheckTime(time)
+            elif not self.isInBounds(time):
+                self.GetLastTrajectory().endTime = time
             else:
                 collisions = self.physicObject.getCollisions(time)
                 if len(collisions) > 0:
@@ -80,6 +77,17 @@ class Trajectory:
                                                startTime=time,
                                                physicObject=self.physicObject)
 
+    def isInBounds(self, time):
+        pos = self.GetPoint(time)
+        if pos[0] < -40:
+            return False
+        if pos[1] < -40:
+            return False
+        if pos[0] > Globals.ScreenSize[0] + 40:
+            return False
+        if pos[1] > Globals.ScreenSize[1] + 40:
+            return False
+        return True
 
 def UpdateTrajectories():
     time = 0.0
