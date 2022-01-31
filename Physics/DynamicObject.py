@@ -25,7 +25,7 @@ class DynamicObject:
     def draw(self):
         pass
 
-    def update(self):
+    def update(self, time):
         self.draw()
 
     def move(self, direction):

@@ -8,4 +8,5 @@ Screen = None
 Gravity = numpy.array((0, 250))
 TerrainSize = 30
 Terrain = None
-Bounciness = 0.6
+Bounciness = 0.3
+MoveJumps = numpy.array((30, -100))

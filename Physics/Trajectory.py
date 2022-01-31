@@ -107,6 +107,9 @@ def UpdateTrajectories():
 
 
 def reflectVelocityOnNormal(velocity, normal):
-    normal /= np.linalg.norm(normal, 2)
+    size = np.linalg.norm(normal, 2)
+    if size == 0:
+        return velocity
+    normal /= size
     projected = np.linalg.multi_dot((velocity, normal)) * normal
     return velocity - 2 * projected

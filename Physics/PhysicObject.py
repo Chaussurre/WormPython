@@ -20,7 +20,7 @@ class PhysicObject(DynamicObject):
     def update(self, time):
         if self.trajectory is not None:
             self.position = self.trajectory.GetPoint(time)
-        DynamicObject.update(self)
+        DynamicObject.update(self, time)
 
     def impulse(self, speed):
         self.trajectory = Trajectory(startPosition=self.position, startVelocity=speed, physicObject=self)

@@ -15,6 +15,8 @@ class GameManager:
         self.time = 0
         self.endSimTime = 0
         self.inputMode = False
+        self.listWorms = []
+        self.focusedWorm = 0
         pygame.init()
         Globals.Screen = pygame.display.set_mode(Globals.ScreenSize)
         pygame.display.set_caption("Best worm game", "")
@@ -44,8 +46,7 @@ class GameManager:
     def main(self):
         Globals.Terrain = self.createTerrain()
 
-        Worm(position=(200, 100), velocity=np.array((50, -50)))
-        Worm(position=(299, 100), velocity=np.array((-50, -50)))
+        self.addWorm(position=np.array((300, 450)))
 
         pygame.display.flip()
         clock = pygame.time.Clock()
@@ -86,13 +87,23 @@ class GameManager:
     def setInputMode(self):
         for x in Globals.listPhysicObjects:
             x.trajectory = None
-        self.inputMode = False
+        self.inputMode = True
         self.time = 0
         print("ready for inputs")
 
 
     def runInputMode(self):
-        pass
+        if len(self.listWorms) == 0:
+            return
+
+        self.UpdateDynamicObjects()
+
+        worm = self.listWorms[self.focusedWorm]
+        if worm.inputMove():
+            self.setSimMode()
+
+    def addWorm(self, position):
+        self.listWorms.append(Worm(position))
 
 
 GameManager().main()
