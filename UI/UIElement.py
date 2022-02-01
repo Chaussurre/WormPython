@@ -12,6 +12,3 @@ class UIElement:
 
     def addChild(self, child):
         self.children.append(child)
-
-
-RootUI = UIElement()

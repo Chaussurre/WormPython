@@ -5,6 +5,25 @@ KeyList = []
 KeyDownList = []
 KeyUpList = []
 
+mouseButtons = []
+mouseButtonsDown = []
+mouseButtonsUp = []
+
+def mousePos():
+    return np.array(pygame.mouse.get_pos())
+
+def mouseClick(button=0):
+    return button in mouseButtons
+
+def mouseClickDown(button=0):
+    return button in mouseButtonsDown
+
+def mouseClickUp(button=0):
+    return button in mouseButtonsUp
+
+def mouseInRect(rect):
+    pos = mousePos()
+    return rect[0][0] <= pos[0] <= rect[1][0] and rect[0][1] <= pos[1] <= rect[1][1]
 
 def SetKeyDown(key):
     KeyDownList.append(key)
@@ -17,6 +36,19 @@ def SetKeyUp(key):
 def UpdateKeys():
     KeyDownList.clear()
     KeyUpList.clear()
+
+    mouseButtonsUp.clear()
+    mouseButtonsDown.clear()
+
+    for button, pressed in enumerate(pygame.mouse.get_pressed(3)):
+        if pressed:
+            if button not in mouseButtons:
+                mouseButtons.append(button)
+                mouseButtonsDown.append(button)
+        else:
+            if button in mouseButtons:
+                mouseButtons.remove(button)
+                mouseButtonsUp.append(button)
 
 def IsKey(key):
     return key in KeyList

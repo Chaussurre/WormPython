@@ -95,10 +95,13 @@ def UpdateTrajectories():
     while time < 50:
         time += 1.0 / Globals.FrameRate
         for x in Globals.listPhysicObjects:
-            x.trajectory.CheckTime(time)
+            if x.trajectory is not None:
+                x.trajectory.CheckTime(time)
 
     end = 0
     for x in Globals.listPhysicObjects:
+        if x.trajectory is None:
+            continue
         traj = x.trajectory.GetLastTrajectory()
         if traj.endTime > 50:
             traj.endTime = 50

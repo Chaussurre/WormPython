@@ -3,8 +3,7 @@ import numpy as np
 import Globals
 from UI.Button import Button
 from UI.Panel import Panel
-from UI.Text import Text
-from UI.UIElement import RootUI
+from UI.UIElement import UIElement
 
 weaponPanelSize = 200
 weaponPanelMargin = 0
@@ -12,6 +11,9 @@ weaponPanelColor = (0, 0, 100)
 
 weaponButtonsMargin = 20
 weaponButtonsSize = 40
+
+listWeaponButtons = []
+RootUI = UIElement()
 
 def InitUI():
     WeaponPanelPosition = (Globals.ScreenSize[0] - weaponPanelSize / 2 - weaponPanelMargin, Globals.ScreenSize[1] / 2)
@@ -25,4 +27,5 @@ def InitUI():
                            size=np.array((weaponPanelSize - 2 * weaponButtonsMargin, weaponButtonsSize)),
                            text="Grenade",
                            sizeFont=30)
+    listWeaponButtons.append(GrenadeButton)
     WeaponPanel.addChild(GrenadeButton)

@@ -4,10 +4,11 @@ import pygame.gfxdraw
 
 import Globals
 from Input import Input
-from Physics import Trajectory
 from Physics.Terrain import Terrain
-from UI.UILayout import InitUI
-from UI.UIElement import RootUI
+from TurnPhases.MoveWormPhase import MoveWormPhase
+from TurnPhases.RunSim import RunSim
+from UI import UILayout
+from UI.UILayout import InitUI, RootUI
 from Worm.Worm import Worm
 
 
@@ -15,9 +16,7 @@ class GameManager:
 
     def __init__(self):
         self.running = True
-        self.time = 0
-        self.endSimTime = 0
-        self.inputMode = False
+        self.turnPhase = None
         self.listWorms = []
         self.focusedWorm = 0
         pygame.init()
@@ -25,7 +24,33 @@ class GameManager:
         pygame.display.set_caption("Best worm game", "")
         Globals.Screen.fill((0, 0, 0))
 
-    def UpdateEvents(self):
+    def main(self):
+        Globals.Terrain = self.createTerrain()
+        self.addWorm(position=np.array((200, 100)))
+        self.addWorm(position=np.array((300, 100)))
+
+        clock = pygame.time.Clock()
+        self.turnPhase = RunSim(self)
+        try:
+            while self.running:
+                clock.tick(Globals.FrameRate)
+                self.updateEvents()
+                Globals.Screen.fill((0, 0, 0))
+                Globals.Terrain.draw()
+                self.playTurnPhase()
+                RootUI.drawUI()
+                pygame.display.flip()
+        finally:
+            pygame.quit()
+
+    def playTurnPhase(self):
+        if self.turnPhase is None:
+            return
+        newPhase = self.ChangePhase(self.turnPhase.update())
+        if newPhase is not None:
+            self.turnPhase = newPhase
+
+    def updateEvents(self):
         Input.UpdateKeys()
         event = pygame.event.poll()
         while event.type != pygame.NOEVENT:
@@ -37,36 +62,6 @@ class GameManager:
                 Input.SetKeyUp(event.key)
             event = pygame.event.poll()
 
-    def main(self):
-        Globals.Terrain = self.createTerrain()
-        self.addWorm(position=np.array((200, 100)))
-
-        clock = pygame.time.Clock()
-        self.setSimMode()
-
-        try:
-            while self.running:
-                clock.tick(Globals.FrameRate)
-                self.UpdateEvents()
-                Globals.Screen.fill((0, 0, 0))
-                Globals.Terrain.draw()
-                if self.inputMode:
-                    self.runInputMode()
-                else:
-                    self.runSimMode()
-                RootUI.drawUI()
-                pygame.display.flip()
-        finally:
-            pygame.quit()
-
-    def UpdateDynamicObjects(self):
-        for DO in Globals.listDynamicObjects:
-            DO.update(self.time)
-
-    def PrintTrajectories(self, time=0, color="red"):
-        for PO in Globals.listPhysicObjects:
-            if PO.trajectory is not None:
-                PO.trajectory.print(time, color=color)
 
     def createTerrain(self):
         terrain = Terrain()
@@ -75,32 +70,17 @@ class GameManager:
         terrain.link(0, 1)
         return terrain
 
-    def setSimMode(self):
-        self.inputMode = False
-        self.endSimTime = Trajectory.UpdateTrajectories()
-
-    def runSimMode(self):
-        self.PrintTrajectories(self.time)
-        self.UpdateDynamicObjects()
-        self.time += 1.0 / Globals.FrameRate
-        if self.time >= self.endSimTime:
-            self.setInputMode()
-
-    def setInputMode(self):
-        for x in Globals.listPhysicObjects:
-            x.trajectory = None
-        self.inputMode = True
-        self.time = 0
-
-    def runInputMode(self):
-        if len(self.listWorms) == 0:
+    def ChangePhase(self, phase):
+        if phase is None:
             return
 
-        self.UpdateDynamicObjects()
+        if phase == "MoveWormPhase":
+            self.turnPhase = MoveWormPhase(self)
+        elif phase == "RunSim":
+            self.turnPhase = RunSim(self)
+        else:
+            print("do not know phase:", phase)
 
-        worm = self.listWorms[self.focusedWorm]
-        if worm.inputMove():
-            self.setSimMode()
 
     def addWorm(self, position):
         self.listWorms.append(Worm(position))

@@ -2,6 +2,7 @@ import numpy as np
 import pygame.draw
 
 import Globals
+import Input.Input
 from UI.UIElement import UIElement
 
 
@@ -10,11 +11,18 @@ class Panel(UIElement):
         UIElement.__init__(self, position=position)
         self.size = size
         self.color = color
+        self.rect = self.position - self.size / 2, self.position + self.size / 2
+
+    @property
+    def rectWithSize(self):
+        return self.rect[0], self.size
 
     def drawUI(self):
-        topLeft = self.position - self.size / 2
-        bottomRight = self.position + self.size / 2
+
         pygame.draw.rect(Globals.Screen,
                          color=self.color,
-                         rect=(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1]))
+                         rect=self.rectWithSize)
         UIElement.drawUI(self)
+
+    def isMouseOver(self):
+        return Input.Input.mouseInRect(self.rect)
