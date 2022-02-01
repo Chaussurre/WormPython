@@ -1,6 +1,6 @@
 import Globals
 from Physics import Trajectory
-from UI import UILayout
+from UI import UILayout, UIGlobals
 
 
 class RunSim:
@@ -8,7 +8,7 @@ class RunSim:
         self.mainGame = mainGame
         self.time = 0
         self.endSimTime = Trajectory.UpdateTrajectories()
-        for button in UILayout.listWeaponButtons:
+        for button in UIGlobals.listWeaponButtons:
             button.active = False
 
     def update(self):

@@ -1,31 +1,20 @@
 import numpy as np
 
 import Globals
-from UI.Button import Button
+from UI import UIGlobals
 from UI.Panel import Panel
-from UI.UIElement import UIElement
+from Weapon.WeaponButton import WeaponButton
+from Weapon.WeaponList import listWeapons
 
-weaponPanelSize = 200
-weaponPanelMargin = 0
-weaponPanelColor = (0, 0, 100)
-
-weaponButtonsMargin = 20
-weaponButtonsSize = 40
-
-listWeaponButtons = []
-RootUI = UIElement()
 
 def InitUI():
-    WeaponPanelPosition = (Globals.ScreenSize[0] - weaponPanelSize / 2 - weaponPanelMargin, Globals.ScreenSize[1] / 2)
-    WeaponPanel = Panel(position=np.array(WeaponPanelPosition),
-                        size=np.array((weaponPanelSize, Globals.ScreenSize[1] - weaponPanelMargin * 2)),
-                        color=weaponPanelColor)
-    RootUI.addChild(WeaponPanel)
+    WeaponPanel = Panel(position=np.array(UIGlobals.weaponPanelPosition),
+                        size=np.array((UIGlobals.weaponPanelSize, Globals.ScreenSize[1] - UIGlobals.weaponPanelMargin * 2)),
+                        color=UIGlobals.weaponPanelColor)
+    UIGlobals.RootUI.addChild(WeaponPanel)
 
-    GrenadeButton = Button(position=np.array((WeaponPanelPosition[0],
-                                              weaponPanelMargin + weaponButtonsMargin + weaponButtonsSize / 2)),
-                           size=np.array((weaponPanelSize - 2 * weaponButtonsMargin, weaponButtonsSize)),
-                           text="Grenade",
-                           sizeFont=30)
-    listWeaponButtons.append(GrenadeButton)
-    WeaponPanel.addChild(GrenadeButton)
+    for w in listWeapons:
+        WeaponPanel.addChild(WeaponButton(w))
+
+
+

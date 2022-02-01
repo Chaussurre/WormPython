@@ -13,3 +13,4 @@ Terrain = None
 Bounciness = 0.4
 MoveJumps = numpy.array((30, -100))
 Font = "Comic Sans MS"
+WeaponSelected = None

@@ -1,5 +1,6 @@
 import numpy as np
 
+from EventManager.EventManager import eventManager
 from UI.Panel import Panel
 from UI.Text import Text
 from UI.UIElement import UIElement
@@ -23,15 +24,10 @@ class Button(UIElement):
         self.inactiveColor = inactiveColor
         self.addChild(self.panel)
         self.addChild(self.text)
-        self.callBacks = [lambda: print("clicked button")]
         self.held = False
 
-    def addCallBack(self, callBack):
-        self.callBacks.append(callBack)
-
     def call(self):
-        for x in self.callBacks:
-            x()
+        eventManager.triggerEvent(f"pressed {self.text.text}")
 
     def drawUI(self):
         if self.active:

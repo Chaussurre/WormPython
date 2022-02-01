@@ -7,8 +7,8 @@ from Input import Input
 from Physics.Terrain import Terrain
 from TurnPhases.MoveWormPhase import MoveWormPhase
 from TurnPhases.RunSim import RunSim
-from UI import UILayout
-from UI.UILayout import InitUI, RootUI
+from UI import UIGlobals
+from UI.UILayout import InitUI
 from Worm.Worm import Worm
 
 
@@ -38,7 +38,7 @@ class GameManager:
                 Globals.Screen.fill((0, 0, 0))
                 Globals.Terrain.draw()
                 self.playTurnPhase()
-                RootUI.drawUI()
+                UIGlobals.RootUI.drawUI()
                 pygame.display.flip()
         finally:
             pygame.quit()
@@ -46,9 +46,7 @@ class GameManager:
     def playTurnPhase(self):
         if self.turnPhase is None:
             return
-        newPhase = self.ChangePhase(self.turnPhase.update())
-        if newPhase is not None:
-            self.turnPhase = newPhase
+        self.ChangePhase(self.turnPhase.update())
 
     def updateEvents(self):
         Input.UpdateKeys()
@@ -61,7 +59,6 @@ class GameManager:
             if event.type == pygame.KEYUP:
                 Input.SetKeyUp(event.key)
             event = pygame.event.poll()
-
 
     def createTerrain(self):
         terrain = Terrain()
@@ -80,7 +77,6 @@ class GameManager:
             self.turnPhase = RunSim(self)
         else:
             print("do not know phase:", phase)
-
 
     def addWorm(self, position):
         self.listWorms.append(Worm(position))

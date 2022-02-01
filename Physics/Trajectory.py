@@ -3,6 +3,7 @@ import pygame.draw
 
 import Globals
 import UI.UILayout
+from UI import UIGlobals
 
 
 class Trajectory:
@@ -80,13 +81,9 @@ class Trajectory:
 
     def isInBounds(self, time):
         pos = self.GetPoint(time)
-        if pos[0] < -40:
+        if -40 > pos[0] > Globals.ScreenSize[0] + 40 - UIGlobals.weaponPanelSize:
             return False
-        if pos[1] < -40:
-            return False
-        if pos[0] > Globals.ScreenSize[0] + 40 - UI.UILayout.weaponPanelSize:
-            return False
-        if pos[1] > Globals.ScreenSize[1] + 40:
+        if -40 > pos[1] > Globals.ScreenSize[1] + 40:
             return False
         return True
 
