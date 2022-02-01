@@ -3,10 +3,13 @@ import pygame
 import pygame.gfxdraw
 
 import Globals
+from Input import Input
 from Physics import Trajectory
 from Physics.Terrain import Terrain
+from UI.UILayout import InitUI
+from UI.UIElement import RootUI
 from Worm.Worm import Worm
-from Input import Input
+
 
 class GameManager:
 
@@ -34,21 +37,10 @@ class GameManager:
                 Input.SetKeyUp(event.key)
             event = pygame.event.poll()
 
-    def UpdateDynamicObjects(self):
-        for DO in Globals.listDynamicObjects:
-            DO.update(self.time)
-
-    def PrintTrajectories(self, time=0, color="red"):
-        for PO in Globals.listPhysicObjects:
-            if PO.trajectory is not None:
-                PO.trajectory.print(time, color=color)
-
     def main(self):
         Globals.Terrain = self.createTerrain()
+        self.addWorm(position=np.array((200, 100)))
 
-        self.addWorm(position=np.array((300, 450)))
-
-        pygame.display.flip()
         clock = pygame.time.Clock()
         self.setSimMode()
 
@@ -62,14 +54,24 @@ class GameManager:
                     self.runInputMode()
                 else:
                     self.runSimMode()
+                RootUI.drawUI()
                 pygame.display.flip()
         finally:
             pygame.quit()
 
+    def UpdateDynamicObjects(self):
+        for DO in Globals.listDynamicObjects:
+            DO.update(self.time)
+
+    def PrintTrajectories(self, time=0, color="red"):
+        for PO in Globals.listPhysicObjects:
+            if PO.trajectory is not None:
+                PO.trajectory.print(time, color=color)
+
     def createTerrain(self):
         terrain = Terrain()
-        terrain.addNode((210, 500))
-        terrain.addNode((900, 500))
+        terrain.addNode((200, 300))
+        terrain.addNode((600, 300))
         terrain.link(0, 1)
         return terrain
 
@@ -89,8 +91,6 @@ class GameManager:
             x.trajectory = None
         self.inputMode = True
         self.time = 0
-        print("ready for inputs")
-
 
     def runInputMode(self):
         if len(self.listWorms) == 0:
@@ -106,4 +106,5 @@ class GameManager:
         self.listWorms.append(Worm(position))
 
 
+InitUI()
 GameManager().main()

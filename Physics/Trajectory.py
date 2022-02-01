@@ -2,6 +2,7 @@ import numpy as np
 import pygame.draw
 
 import Globals
+import UI.UILayout
 
 
 class Trajectory:
@@ -83,7 +84,7 @@ class Trajectory:
             return False
         if pos[1] < -40:
             return False
-        if pos[0] > Globals.ScreenSize[0] + 40:
+        if pos[0] > Globals.ScreenSize[0] + 40 - UI.UILayout.weaponPanelSize:
             return False
         if pos[1] > Globals.ScreenSize[1] + 40:
             return False
