@@ -20,4 +20,4 @@ class WeaponButton(Button):
 
 
     def call(self):
-        eventManager.triggerEvent(self.weapon.eventChoose)
+        eventManager.triggerEvent(self.weapon.eventChoose, self.weapon)

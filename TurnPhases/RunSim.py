@@ -12,15 +12,10 @@ class RunSim:
             button.active = False
 
     def update(self):
-        printTrajectories(self.time)
+        Trajectory.printTrajectories(self.time)
         for DO in Globals.listDynamicObjects:
             DO.update(self.time)
         self.time += 1.0 / Globals.FrameRate
         if self.time >= self.endSimTime:
-            return "MoveWormPhase"
+            return "MoveWormPhase", None
         return None
-
-def printTrajectories(time=0, color="red"):
-    for PO in Globals.listPhysicObjects:
-        if PO.trajectory is not None:
-            PO.trajectory.print(time, color=color)

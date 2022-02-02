@@ -18,7 +18,8 @@ class Panel(UIElement):
         return self.rect[0], self.size
 
     def drawUI(self):
-
+        if not self.visible:
+            return
         pygame.draw.rect(Globals.Screen,
                          color=self.color,
                          rect=self.rectWithSize)

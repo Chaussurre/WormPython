@@ -1,6 +1,7 @@
 import Globals
 from EventManager.EventManager import eventManager
 from UI import UILayout, UIGlobals
+from Weapon.WeaponList import listWeapons
 
 
 class MoveWormPhase:
@@ -10,18 +11,21 @@ class MoveWormPhase:
             x.trajectory = None
         for button in UIGlobals.listWeaponButtons:
             button.active = True
-        self.listenerGrenade = lambda: self.chooseWeapon("Grenade")
         self.chosenWeapon = None
-        eventManager.addListener(f"pressed Grenade", self.listenerGrenade)
+        for w in listWeapons:
+            eventManager.addListener(w.eventChoose, self.chooseWeapon)
 
     def stopListen(self):
-        eventManager.removeListener(f"pressed Grenade", self.listenerGrenade)
+        for w in listWeapons:
+            eventManager.removeListener(w.eventChoose, self.chooseWeapon)
 
     def chooseWeapon(self, weapon):
-        print(weapon)
         self.chosenWeapon = weapon
 
     def update(self):
+        if self.chosenWeapon is not None:
+            return "WeaponAimPhase", self.chosenWeapon
+
         if len(self.mainGame.listWorms) == 0:
             return None
 
@@ -31,5 +35,5 @@ class MoveWormPhase:
         worm = self.mainGame.listWorms[self.mainGame.focusedWorm]
         if worm.inputMove():
             self.stopListen()
-            return "RunSim"
+            return "RunSim", None
         return None

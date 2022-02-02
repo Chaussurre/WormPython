@@ -60,9 +60,11 @@ class Trajectory:
 
             if time > self.endTime:
                 if self.Next is not None:
-                    self.Next.CheckTime(time)
+                    return self.Next.CheckTime(time)
+                return False
             elif not self.isInBounds(time):
                 self.GetLastTrajectory().endTime = time
+                return False
             else:
                 collisions = self.physicObject.getCollisions(time)
                 if len(collisions) > 0:
@@ -74,37 +76,35 @@ class Trajectory:
                     self.endTime = time
 
                     if np.linalg.norm(newVel, 2) > 20:
-                        self.Next = Trajectory(startPosition=self.GetPoint(time) - normal,
+                        self.Next = Trajectory(startPosition=self.GetPoint(time) - normal * 2,
                                                startVelocity=newVel,
                                                startTime=time,
                                                physicObject=self.physicObject)
+                        return True
+                    return False
+            return True
+        return False
 
     def isInBounds(self, time):
         pos = self.GetPoint(time)
-        if -40 > pos[0] > Globals.ScreenSize[0] + 40 - UIGlobals.weaponPanelSize:
+        if -40 > pos[0] or pos[0] > Globals.ScreenSize[0] + 40 - UIGlobals.weaponPanelSize:
             return False
-        if -40 > pos[1] > Globals.ScreenSize[1] + 40:
+        if -40 > pos[1] or pos[1] > Globals.ScreenSize[1] + 40:
             return False
         return True
 
+
 def UpdateTrajectories():
     time = 0.0
-    while time < 50:
+    changed = True
+    while time < 50 and changed:
+        changed = False
         time += 1.0 / Globals.FrameRate
         for x in Globals.listPhysicObjects:
             if x.trajectory is not None:
-                x.trajectory.CheckTime(time)
-
-    end = 0
-    for x in Globals.listPhysicObjects:
-        if x.trajectory is None:
-            continue
-        traj = x.trajectory.GetLastTrajectory()
-        if traj.endTime > 50:
-            traj.endTime = 50
-        if traj.endTime > end:
-            end = traj.endTime
-    return end
+                if x.trajectory.CheckTime(time):
+                    changed = True
+    return time
 
 
 def reflectVelocityOnNormal(velocity, normal):
@@ -114,3 +114,9 @@ def reflectVelocityOnNormal(velocity, normal):
     normal /= size
     projected = np.linalg.multi_dot((velocity, normal)) * normal
     return velocity - 2 * projected
+
+
+def printTrajectories(time=0, color="red"):
+    for PO in Globals.listPhysicObjects:
+        if PO.trajectory is not None:
+            PO.trajectory.print(time, color=color)

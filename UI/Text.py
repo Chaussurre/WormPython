@@ -13,5 +13,7 @@ class Text(UIElement):
         self.font = pygame.font.SysFont(Globals.Font, size)
 
     def drawUI(self):
+        if not self.visible:
+            return
         Globals.Screen.blit(self.font.render(self.text, 1, "white"), tuple(self.position))
         UIElement.drawUI(self)

@@ -7,6 +7,7 @@ from Input import Input
 from Physics.Terrain import Terrain
 from TurnPhases.MoveWormPhase import MoveWormPhase
 from TurnPhases.RunSim import RunSim
+from TurnPhases.WeaponAimPhase import WeaponAimPhase
 from UI import UIGlobals
 from UI.UILayout import InitUI
 from Worm.Worm import Worm
@@ -23,6 +24,10 @@ class GameManager:
         Globals.Screen = pygame.display.set_mode(Globals.ScreenSize)
         pygame.display.set_caption("Best worm game", "")
         Globals.Screen.fill((0, 0, 0))
+
+    @property
+    def movingWorm(self):
+        return self.listWorms[self.focusedWorm]
 
     def main(self):
         Globals.Terrain = self.createTerrain()
@@ -67,14 +72,17 @@ class GameManager:
         terrain.link(0, 1)
         return terrain
 
-    def ChangePhase(self, phase):
-        if phase is None:
+    def ChangePhase(self, result):
+        if result is None:
             return
+        phase, arg = result
 
         if phase == "MoveWormPhase":
             self.turnPhase = MoveWormPhase(self)
         elif phase == "RunSim":
             self.turnPhase = RunSim(self)
+        elif phase == "WeaponAimPhase":
+            self.turnPhase = WeaponAimPhase(self, arg)
         else:
             print("do not know phase:", phase)
 

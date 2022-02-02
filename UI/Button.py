@@ -30,6 +30,8 @@ class Button(UIElement):
         eventManager.triggerEvent(f"pressed {self.text.text}")
 
     def drawUI(self):
+        if not self.visible:
+            return
         if self.active:
             if self.held:
                 self.panel.color = self.pressedColor

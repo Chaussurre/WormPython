@@ -5,6 +5,7 @@ class UIElement:
     def __init__(self, position=np.array((0, 0))):
         self.children = []
         self.position = position
+        self.visible = True
 
     def drawUI(self):
         for c in self.children:
