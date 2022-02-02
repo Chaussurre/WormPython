@@ -12,11 +12,10 @@ class PhysicObject(DynamicObject):
         DynamicObject.__init__(self, position)
         Globals.listPhysicObjects.append(self)
         self.kinematic = kinematic
-        self.trajectory = Trajectory(startPosition=self.position,
-                                     startVelocity=np.array(velocity),
-                                     physicObject=self)
+
+        self.trajectory = None
+        self.impulse(np.array(velocity))
         self.collider = Collider(position, size)
-        self.impulse(velocity)
         # A list of objects that will be ignored in the first trajectory, useful if two objects starts at the same pos
         self.ignoreObjects = []
 

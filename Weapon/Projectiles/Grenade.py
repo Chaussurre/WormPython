@@ -1,8 +1,11 @@
 import pygame
 
 import Globals
+from Physics.PhysicObject import PhysicObject
+from Physics.TimedTrajectory import TimedTrajectory
 from Weapon.Projectile import Projectile
 
+Timer = 2
 
 class Grenade(Projectile):
     def __init__(self, worm):
@@ -13,3 +16,5 @@ class Grenade(Projectile):
         pygame.draw.circle(Globals.Screen, "black", self.screenPosition, 6, 2)
         pygame.draw.circle(Globals.Screen, "white", self.screenPosition, 8, 2)
 
+    def impulse(self, speed):
+        self.trajectory = TimedTrajectory(startPosition=self.position, startVelocity=speed, physicObject=self, timer=Timer)
