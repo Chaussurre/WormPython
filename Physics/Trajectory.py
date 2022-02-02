@@ -2,7 +2,6 @@ import numpy as np
 import pygame.draw
 
 import Globals
-import UI.UILayout
 from UI import UIGlobals
 
 
@@ -14,6 +13,7 @@ class Trajectory:
         self.physicObject = physicObject
         self.endTime = float("inf")
         self.Next = None
+        self.lastCheckedPos = startPosition
 
     def GetPoint(self, time):
         if time > self.endTime:
@@ -76,12 +76,13 @@ class Trajectory:
                     self.endTime = time
 
                     if np.linalg.norm(newVel, 2) > 20:
-                        self.Next = Trajectory(startPosition=self.GetPoint(time) - normal * 2,
+                        self.Next = Trajectory(startPosition=self.lastCheckedPos,
                                                startVelocity=newVel,
                                                startTime=time,
                                                physicObject=self.physicObject)
                         return True
                     return False
+            self.lastCheckedPos = self.GetPoint(time)
             return True
         return False
 
@@ -99,7 +100,7 @@ def UpdateTrajectories():
     changed = True
     while time < 50 and changed:
         changed = False
-        time += 1.0 / Globals.FrameRate
+        time += 1.0 / Globals.CollisionTestRate
         for x in Globals.listPhysicObjects:
             if x.trajectory is not None:
                 if x.trajectory.CheckTime(time):

@@ -11,6 +11,7 @@ Terrain = None
 WeaponSelected = None
 
 #parameters
+CollisionTestRate = 60
 ScreenSize = (1000, 600)
 FrameRate = 60
 Gravity = numpy.array((0, 250))

@@ -1,7 +1,7 @@
 import Globals
 from EventManager.EventManager import eventManager
-from UI import UILayout, UIGlobals
-from Weapon.WeaponList import listWeapons
+from UI import UIGlobals
+from Weapon.WeaponList.WeaponList import listWeapons
 
 
 class MoveWormPhase:

@@ -31,8 +31,8 @@ class GameManager:
 
     def main(self):
         Globals.Terrain = self.createTerrain()
-        self.addWorm(position=np.array((200, 100)))
-        self.addWorm(position=np.array((300, 100)))
+        self.addWorm(position=np.array((200, 100)), team="green")
+        self.addWorm(position=np.array((300, 100)), team="purple")
 
         clock = pygame.time.Clock()
         self.turnPhase = RunSim(self)
@@ -86,8 +86,8 @@ class GameManager:
         else:
             print("do not know phase:", phase)
 
-    def addWorm(self, position):
-        self.listWorms.append(Worm(position))
+    def addWorm(self, position, team="green"):
+        self.listWorms.append(Worm(position, team=team))
 
 
 InitUI()

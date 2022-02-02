@@ -4,7 +4,7 @@ import Globals
 from UI import UIGlobals
 from UI.Panel import Panel
 from Weapon.WeaponButton import WeaponButton
-from Weapon.WeaponList import listWeapons
+from Weapon.WeaponList.WeaponList import listWeapons
 
 
 def InitUI():

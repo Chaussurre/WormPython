@@ -11,11 +11,14 @@ class PhysicObject(DynamicObject):
     def __init__(self, position=(0, 0), velocity=(0, 0), kinematic=False, size=1):
         DynamicObject.__init__(self, position)
         Globals.listPhysicObjects.append(self)
-        self.velocity = np.array((float(velocity[0]), float(velocity[1])))
         self.kinematic = kinematic
-        self.trajectory = None
+        self.trajectory = Trajectory(startPosition=self.position,
+                                     startVelocity=np.array(velocity),
+                                     physicObject=self)
         self.collider = Collider(position, size)
         self.impulse(velocity)
+        # A list of objects that will be ignored in the first trajectory, useful if two objects starts at the same pos
+        self.ignoreObjects = []
 
     def update(self, time):
         if self.trajectory is not None:
@@ -43,5 +46,8 @@ class PhysicObject(DynamicObject):
             collision = self.collider.getCollision(x.collider, center=center, otherCenter=otherCenter)
             if collision is not None:
                 colliding.append(collision)
+
+        if time < self.trajectory.endTime:
+            colliding = [x for x in colliding if x.otherCollider not in self.ignoreObjects]
 
         return colliding

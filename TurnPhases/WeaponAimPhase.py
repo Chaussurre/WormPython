@@ -13,15 +13,16 @@ class WeaponAimPhase:
         for b in listWeaponButtons:
             b.visible = False
             b.active = False
+        self.worm = mainGame.movingWorm
+        self.projectile = weapon.createProjectile(self.worm)
 
     def update(self):
         if Input.mouseClickDown(0):
             self.endPhase()
             return "RunSim", None
 
-        worm = self.mainGame.movingWorm
-        relative = Input.mousePos() - worm.position
-        worm.impulse(relative)
+        relative = Input.mousePos() - self.worm.position
+        self.projectile.impulse(relative)
 
         Trajectory.UpdateTrajectories()
         Trajectory.printTrajectories()

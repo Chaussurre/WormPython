@@ -1,5 +1,7 @@
 class Weapon:
-    def __init__(self, name, projectile):
+    def __init__(self, name):
         self.name = name
-        self.projectile = projectile
         self.eventChoose = f"Chosen {name}"
+
+    def createProjectile(self, worm):
+        pass
