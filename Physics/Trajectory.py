@@ -41,6 +41,9 @@ class Trajectory:
         return time * Globals.Gravity + self.startVelocity
 
     def print(self, time, color="red"):
+        if time > self.physicObject.aliveTimer:
+            return
+
         previousPos = self.GetPoint(time)
         predictTime = time
         step = 5
@@ -123,7 +126,6 @@ def UpdateTrajectories():
             if x.trajectory is not None:
                 if x.trajectory.CheckTime(time):
                     changed = True
-    print(time)
     return time
 
 

@@ -39,7 +39,6 @@ class Collider:
 
     def getCollisions(self, time, center):
         colliding = []
-        #center = self.predictPositionAt(time)
 
         terrainCollision = Globals.Terrain.getCollision(self, center)
         if terrainCollision is not None:

@@ -10,7 +10,7 @@ class Worm(PhysicObject):
         PhysicObject.__init__(self, position=position, velocity=velocity, size=15)
         self.team = team
 
-    def draw(self):
+    def draw(self, _):
         pygame.draw.circle(Globals.Screen, self.team, self.screenPosition, 10)
         pygame.draw.circle(Globals.Screen, "black", self.screenPosition, 12, 2)
         pygame.draw.circle(Globals.Screen, "white", self.screenPosition, 15, 3)

@@ -23,12 +23,12 @@ class DynamicObject:
     def position(self, value):
         self.x, self.y = float(value[0]), float(value[1])
 
-    def draw(self):
+    def draw(self, time):
         pass
 
     def update(self, time):
         if self.visible:
-            self.draw()
+            self.draw(time)
 
     def move(self, direction):
         self.position += direction

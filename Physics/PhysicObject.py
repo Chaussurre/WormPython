@@ -57,8 +57,8 @@ class PhysicObject(DynamicObject):
     def getCollisions(self, time):
         colliding = self.collider.getCollisions(time, self.predictPositionAt(time))
 
-        # We only check ignored collisions on the first trajectory
-        if time < self.trajectory.endTime:
+        # We only check ignored collisions for 0.5 secs
+        if time < 0.5:
             colliding = [x for x in colliding if x.otherCollider not in self.ignoreObjects]
 
         return colliding

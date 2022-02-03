@@ -16,7 +16,7 @@ class Grenade(Projectile):
         self.explosion = Explosion(self.position, ExplosionSize, force=ExplosionForce)
         self.aliveTimer = Timer
 
-    def draw(self):
+    def draw(self, time):
         pygame.draw.circle(Globals.Screen, "blue", self.screenPosition, 4)
         pygame.draw.circle(Globals.Screen, "black", self.screenPosition, 6, 2)
         pygame.draw.circle(Globals.Screen, "white", self.screenPosition, 8, 2)
@@ -34,3 +34,7 @@ class Grenade(Projectile):
 
     def startPrediction(self):
         self.explosion.exploded = False
+
+    def destroy(self):
+        self.explosion.destroy()
+        super().destroy()

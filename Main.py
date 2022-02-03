@@ -80,7 +80,7 @@ class GameManager:
         if phase == "MoveWormPhase":
             self.turnPhase = MoveWormPhase(self)
         elif phase == "RunSim":
-            self.turnPhase = RunSim(self)
+            self.turnPhase = RunSim(self, arg)
         elif phase == "WeaponAimPhase":
             self.turnPhase = WeaponAimPhase(self, arg)
         else:

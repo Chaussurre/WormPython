@@ -4,10 +4,13 @@ from UI import UILayout, UIGlobals
 
 
 class RunSim:
-    def __init__(self, mainGame):
+    def __init__(self, mainGame, endTime=None):
         self.mainGame = mainGame
         self.time = 0
-        self.endSimTime = Trajectory.UpdateTrajectories()
+        if endTime is None:
+            self.endSimTime = Trajectory.UpdateTrajectories()
+        else:
+            self.endSimTime = endTime
         for button in UIGlobals.listWeaponButtons:
             button.active = False
 

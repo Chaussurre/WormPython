@@ -15,11 +15,12 @@ class WeaponAimPhase:
             b.active = False
         self.worm = mainGame.movingWorm
         self.projectile = weapon.createProjectile(self.worm)
+        self.endTimeSim = 0
 
     def update(self):
         if Input.mouseClickDown(0):
             self.endPhase()
-            return "RunSim", None
+            return "RunSim", self.endTimeSim
 
         for x in Globals.listPhysicObjects:
             x.trajectory = None
@@ -27,7 +28,7 @@ class WeaponAimPhase:
         relative = Input.mousePos() - self.worm.position
         self.projectile.impulse(relative)
 
-        Trajectory.UpdateTrajectories()
+        self.endTimeSim = Trajectory.UpdateTrajectories()
         Trajectory.printTrajectories()
 
         for DO in Globals.listDynamicObjects:
