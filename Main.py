@@ -33,9 +33,9 @@ class GameManager:
     def main(self):
         Globals.Terrain = self.createTerrain()
         self.addWorm(position=np.array((150, 300)), team="green")
-        self.addWorm(position=np.array((350, 300)), team="purple")
+        self.addWorm(position=np.array((350, 300)), team="yellow")
         self.addWorm(position=np.array((450, 300)), team="green")
-        self.addWorm(position=np.array((650, 300)), team="purple")
+        self.addWorm(position=np.array((650, 300)), team="yellow")
 
         clock = pygame.time.Clock()
         self.turnPhase = RunSim()

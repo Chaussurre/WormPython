@@ -28,10 +28,8 @@ class Worm(PhysicObject, pygame.sprite.Sprite):
             self.lifeBar.size = np.array((self.life / LifeMax * LifeBarSize, 10))
             self.lifeBar.position = self.lifePanel.position - (LifeMax - self.life) / LifeMax * LifeBarSize / 2 * np.array((1, 0))
             self.lifePanel.drawUI()
-        #pygame.draw.circle(Globals.Screen, self.team, self.screenPosition, 10)
-        #pygame.draw.circle(Globals.Screen, "black", self.screenPosition, 12, 2)
-        #pygame.draw.circle(Globals.Screen, self.team, self.screenPosition, 15, 3)
-        Globals.Screen.blit(self.image, pygame.draw.circle(Globals.Screen, self.team, self.screenPosition, 15, 3))
+        pygame.draw.circle(Globals.Screen, self.team, self.screenPosition, 15)
+        Globals.Screen.blit(self.image, (self.x - 15, self.y - 16))
 
     def inputMove(self):
         xMove = Input.GetKeyBoardDirection()[0]
