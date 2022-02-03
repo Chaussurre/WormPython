@@ -9,6 +9,7 @@ class DynamicObject:
         self.x = 0
         self.y = 0
         self.position = position
+        self.visible = True
 
     @property
     def screenPosition(self):
@@ -26,7 +27,11 @@ class DynamicObject:
         pass
 
     def update(self, time):
-        self.draw()
+        if self.visible:
+            self.draw()
 
     def move(self, direction):
         self.position += direction
+
+    def destroy(self):
+        Globals.listDynamicObjects.remove(self)

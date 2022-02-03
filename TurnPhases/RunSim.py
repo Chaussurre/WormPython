@@ -17,5 +17,7 @@ class RunSim:
             DO.update(self.time)
         self.time += 1.0 / Globals.FrameRate
         if self.time >= self.endSimTime:
+            for x in [x for x in Globals.listPhysicObjects if x.aliveTimer != float("inf")]:
+                x.destroy()
             return "MoveWormPhase", None
         return None

@@ -16,3 +16,8 @@ class TimedTrajectory(Trajectory):
         if time > self.timer:
             return super().GetPoint(self.timer)
         return super().GetPoint(time)
+
+    def CheckTime(self, time):
+        if time <= self.timer:
+            super().CheckTime(time)
+        return time <= self.timer + 1

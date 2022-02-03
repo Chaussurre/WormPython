@@ -20,6 +20,9 @@ class Trajectory:
             if self.Next is not None:
                 return self.Next.GetPoint(time)
             time = self.endTime
+
+        if time < self.startTime:
+            return self.startPosition
         time -= self.startTime
 
         return 0.5 * time * time * Globals.Gravity + self.startVelocity * time + self.startPosition
@@ -29,14 +32,18 @@ class Trajectory:
             if self.Next is not None:
                 return self.Next.GetVelocity(time)
             time = self.endTime
-        time -= self.startTime
+
+        if time > self.startTime:
+            time -= self.startTime
+        else:
+            time = self.startTime
 
         return time * Globals.Gravity + self.startVelocity
 
     def print(self, time, color="red"):
         previousPos = self.GetPoint(time)
         predictTime = time
-        step = 10
+        step = 5
         currentTraj = self
         while predictTime > currentTraj.endTime and currentTraj.Next is not None:
             currentTraj = currentTraj.Next
@@ -54,6 +61,11 @@ class Trajectory:
         if self.Next is None:
             return self
         return self.Next.GetLastTrajectory()
+
+    def GetTrajectoryAt(self, time):
+        if self.endTime > time or self.Next is None:
+            return self
+        return self.Next.GetLastTrajectory(time)
 
     def CheckTime(self, time):
         if self.physicObject is not None:
@@ -75,16 +87,19 @@ class Trajectory:
                     newVel = reflectVelocityOnNormal(self.GetVelocity(time), normal) * Globals.Bounciness
                     self.endTime = time
 
-                    if np.linalg.norm(newVel, 2) > 20:
-                        self.Next = Trajectory(startPosition=self.lastCheckedPos,
-                                               startVelocity=newVel,
-                                               startTime=time,
-                                               physicObject=self.physicObject)
+                    if np.linalg.norm(newVel, 2) > 5:
+                        self.impulseAt(newVel, time)
                         return True
                     return False
             self.lastCheckedPos = self.GetPoint(time)
             return True
         return False
+
+    def impulseAt(self, velocity, time):
+        self.Next = Trajectory(startPosition=self.lastCheckedPos,
+                               startVelocity=velocity,
+                               startTime=time,
+                               physicObject=self.physicObject)
 
     def isInBounds(self, time):
         pos = self.GetPoint(time)
@@ -98,13 +113,17 @@ class Trajectory:
 def UpdateTrajectories():
     time = 0.0
     changed = True
+    for x in Globals.listPhysicObjects:
+        x.startPrediction()
     while time < 50 and changed:
         changed = False
         time += 1.0 / Globals.CollisionTestRate
         for x in Globals.listPhysicObjects:
+            x.predictActionAt(time)
             if x.trajectory is not None:
                 if x.trajectory.CheckTime(time):
                     changed = True
+    print(time)
     return time
 
 

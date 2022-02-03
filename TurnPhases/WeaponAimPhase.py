@@ -21,6 +21,9 @@ class WeaponAimPhase:
             self.endPhase()
             return "RunSim", None
 
+        for x in Globals.listPhysicObjects:
+            x.trajectory = None
+
         relative = Input.mousePos() - self.worm.position
         self.projectile.impulse(relative)
 

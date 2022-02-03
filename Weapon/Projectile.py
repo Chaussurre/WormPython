@@ -10,3 +10,4 @@ class Projectile(PhysicObject):
         self.ignoreObjects.append(worm.collider)
         if worm.trajectory is not None:
             worm.ignoreObjects.append(self.collider)
+

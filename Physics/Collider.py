@@ -1,12 +1,14 @@
 import numpy as np
 
+import Globals
 from Physics.Collision import Collision
 
 
 class Collider:
-    def __init__(self, position, size):
+    def __init__(self, position, size, physicObject=None):
         self.size = size
         self.position = position
+        self.physicObject = physicObject
 
     def HasPoint(self, point, center=None):
         if center is None:
@@ -34,3 +36,23 @@ class Collider:
         if size < 0 or distance == 0:
             return np.array((0, 0))
         return relative / distance * size
+
+    def getCollisions(self, time, center):
+        colliding = []
+        #center = self.predictPositionAt(time)
+
+        terrainCollision = Globals.Terrain.getCollision(self, center)
+        if terrainCollision is not None:
+            colliding.append(terrainCollision)
+
+        for x in Globals.listPhysicObjects:
+            otherCenter = x.predictPositionAt(time)
+
+            if otherCenter is None:
+                continue
+
+            collision = self.getCollision(x.collider, center=center, otherCenter=otherCenter)
+            if collision is not None:
+                colliding.append(collision)
+
+        return colliding
