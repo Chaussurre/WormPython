@@ -23,6 +23,7 @@ class PhysicObject(DynamicObject):
     def update(self, time):
         if self.trajectory is not None:
             self.position = self.trajectory.GetPoint(time)
+            self.trajectory.updateEvent(time)
         if time <= self.aliveTimer:
             super().update(time)
 

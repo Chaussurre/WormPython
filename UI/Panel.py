@@ -11,7 +11,10 @@ class Panel(UIElement):
         UIElement.__init__(self, position=position)
         self.size = size
         self.color = color
-        self.rect = self.position - self.size / 2, self.position + self.size / 2
+
+    @property
+    def rect(self):
+        return self.position - self.size / 2, self.position + self.size / 2
 
     @property
     def rectWithSize(self):

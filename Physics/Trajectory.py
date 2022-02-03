@@ -14,6 +14,7 @@ class Trajectory:
         self.endTime = float("inf")
         self.Next = None
         self.lastCheckedPos = startPosition
+        self.events = {}
 
     def GetPoint(self, time):
         if time > self.endTime:
@@ -113,6 +114,15 @@ class Trajectory:
         if -40 > pos[1] or pos[1] > Globals.ScreenSize[1] + 40:
             return False
         return True
+
+    def addEvent(self, time, event):
+        self.events[time] = event
+
+    def updateEvent(self, time):
+        for key, event in list(self.events.items()):
+            if key < time:
+                event()
+                self.events.pop(key)
 
 
 def UpdateTrajectories():

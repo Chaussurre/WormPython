@@ -9,11 +9,12 @@ from Weapon.Projectile import Projectile
 Timer = 3
 ExplosionSize = 30
 ExplosionForce = 30
+DamageMax = 40
 
 class Grenade(Projectile):
     def __init__(self, worm):
         Projectile.__init__(self, worm, size=8)
-        self.explosion = Explosion(self.position, ExplosionSize, force=ExplosionForce)
+        self.explosion = Explosion(self.position, ExplosionSize, force=ExplosionForce, damage=DamageMax)
         self.aliveTimer = Timer
 
     def draw(self, time):

@@ -5,8 +5,7 @@ from Weapon.WeaponList.WeaponList import listWeapons
 
 
 class MoveWormPhase:
-    def __init__(self, mainGame):
-        self.mainGame = mainGame
+    def __init__(self):
         for x in Globals.listPhysicObjects:
             x.trajectory = None
         for button in UIGlobals.listWeaponButtons:
@@ -26,13 +25,13 @@ class MoveWormPhase:
         if self.chosenWeapon is not None:
             return "WeaponAimPhase", self.chosenWeapon
 
-        if len(self.mainGame.listWorms) == 0:
+        if len(Globals.MainGame.listWorms) == 0:
             return None
 
         for x in Globals.listDynamicObjects:
             x.update(0)
 
-        worm = self.mainGame.listWorms[self.mainGame.focusedWorm]
+        worm = Globals.MainGame.movingWorm
         if worm.inputMove():
             self.stopListen()
             return "RunSim", None

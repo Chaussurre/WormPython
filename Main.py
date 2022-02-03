@@ -16,6 +16,7 @@ from Worm.Worm import Worm
 class GameManager:
 
     def __init__(self):
+        Globals.MainGame = self
         self.running = True
         self.turnPhase = None
         self.listWorms = []
@@ -35,7 +36,7 @@ class GameManager:
         self.addWorm(position=np.array((300, 100)), team="purple")
 
         clock = pygame.time.Clock()
-        self.turnPhase = RunSim(self)
+        self.turnPhase = RunSim()
         try:
             while self.running:
                 clock.tick(Globals.FrameRate)
@@ -78,16 +79,22 @@ class GameManager:
         phase, arg = result
 
         if phase == "MoveWormPhase":
-            self.turnPhase = MoveWormPhase(self)
+            self.turnPhase = MoveWormPhase()
         elif phase == "RunSim":
-            self.turnPhase = RunSim(self, arg)
+            self.turnPhase = RunSim(arg)
         elif phase == "WeaponAimPhase":
-            self.turnPhase = WeaponAimPhase(self, arg)
+            self.turnPhase = WeaponAimPhase(arg)
         else:
             print("do not know phase:", phase)
 
     def addWorm(self, position, team="green"):
         self.listWorms.append(Worm(position, team=team))
+
+    def removeWorm(self, worm):
+        index = self.listWorms.index(worm)
+        if self.focusedWorm >= index:
+            self.focusedWorm -= 1
+        self.listWorms.remove(worm)
 
     def ChangeTurn(self):
         self.focusedWorm += 1

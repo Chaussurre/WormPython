@@ -9,6 +9,7 @@ listPhysicObjects = []
 Screen = None
 Terrain = None
 WeaponSelected = None
+MainGame = None
 
 #parameters
 CollisionTestRate = 60

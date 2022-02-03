@@ -1,13 +1,10 @@
-import numpy as np
-
 import Globals
 from Physics import Trajectory
-from UI import UILayout, UIGlobals
+from UI import UIGlobals
 
 
 class RunSim:
-    def __init__(self, mainGame, endTime=None):
-        self.mainGame = mainGame
+    def __init__(self, endTime=None):
         self.time = 0
         if endTime is None:
             self.endSimTime = Trajectory.UpdateTrajectories()

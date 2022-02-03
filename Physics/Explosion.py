@@ -2,18 +2,21 @@ import numpy as np
 import pygame.draw
 
 import Globals
+import Worm.Worm
 from Physics.Collider import Collider
 from Physics.DynamicObject import DynamicObject
 
 ExplosionDuration = 0.2
 
+
 class Explosion(DynamicObject):
-    def __init__(self, position=np.array((0, 0)), size=10, force=10):
+    def __init__(self, position=np.array((0, 0)), size=10, force=10, damage=10, ):
         super().__init__(position=position)
         self.collider = Collider(position, size)
         self.visibleAt = float("inf")
         self.exploded = False
         self.force = force
+        self.damage = damage
 
     def draw(self, time):
         if self.visibleAt < time < self.visibleAt + ExplosionDuration:
@@ -40,3 +43,9 @@ class Explosion(DynamicObject):
                     if force > self.force * 10:
                         force = self.force * 10
                     PO.impulseAt(relative / distance * force, time)
+                    damage = self.damage
+                    distance -= PO.collider.size
+                    if distance > self.collider.size * 0.5:
+                        damage = self.damage * (self.collider.size - distance) / (self.collider.size * 0.5)
+                    if isinstance(PO, Worm.Worm.Worm):
+                        PO.trajectory.addEvent(time, lambda: PO.dealDamage(damage))

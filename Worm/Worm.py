@@ -4,23 +4,46 @@ import Globals
 import pygame
 from Physics.PhysicObject import PhysicObject
 from Input import Input
+from UI.Panel import Panel
+
+LifeMax = 100
+LifeBarSize = 50
+
 
 class Worm(PhysicObject):
     def __init__(self, position=np.array((0.0, 0.0)), velocity=np.array((0.0, 0.0)), team="green"):
         PhysicObject.__init__(self, position=position, velocity=velocity, size=15)
         self.team = team
+        self.lifeBar = Panel(color="red")
+        self.lifePanel = Panel(color="white", size=np.array((LifeBarSize + 2, 12)))
+        self.lifePanel.addChild(Panel(color="black", size=np.array((LifeBarSize, 10))))
+        self.lifePanel.addChild(self.lifeBar)
+        self.life = LifeMax
 
     def draw(self, _):
+        if self.life > 0:
+            self.lifePanel.position = self.position + np.array((0, - 40))
+            self.lifeBar.size = np.array((self.life / LifeMax * LifeBarSize, 10))
+            self.lifeBar.position = self.lifePanel.position - (LifeMax - self.life) / LifeMax * LifeBarSize / 2 * np.array((1, 0))
+            self.lifePanel.drawUI()
         pygame.draw.circle(Globals.Screen, self.team, self.screenPosition, 10)
         pygame.draw.circle(Globals.Screen, "black", self.screenPosition, 12, 2)
         pygame.draw.circle(Globals.Screen, "white", self.screenPosition, 15, 3)
 
     def inputMove(self):
-        Xmove = Input.GetKeyBoardDirection()[0]
-        if Xmove < 0:
+        xMove = Input.GetKeyBoardDirection()[0]
+        if xMove < 0:
             move = np.array(Globals.MoveJumps)
             move[0] *= -1
             self.impulse(move)
-        if Xmove > 0:
+        if xMove > 0:
             self.impulse(Globals.MoveJumps)
-        return Xmove != 0
+        return xMove != 0
+
+    def dealDamage(self, damage):
+        self.life -= damage
+        if self.life < 0:
+            self.life = 0
+
+    def destroy(self):
+        super().destroy()
