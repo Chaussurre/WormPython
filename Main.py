@@ -32,8 +32,10 @@ class GameManager:
 
     def main(self):
         Globals.Terrain = self.createTerrain()
-        self.addWorm(position=np.array((200, 100)), team="green")
-        self.addWorm(position=np.array((300, 100)), team="purple")
+        self.addWorm(position=np.array((150, 300)), team="green")
+        self.addWorm(position=np.array((350, 300)), team="purple")
+        self.addWorm(position=np.array((450, 300)), team="green")
+        self.addWorm(position=np.array((650, 300)), team="purple")
 
         clock = pygame.time.Clock()
         self.turnPhase = RunSim()
@@ -68,8 +70,8 @@ class GameManager:
 
     def createTerrain(self):
         terrain = Terrain()
-        terrain.addNode((200, 300))
-        terrain.addNode((600, 300))
+        terrain.addNode((100, 400))
+        terrain.addNode((700, 400))
         terrain.link(0, 1)
         return terrain
 
@@ -78,6 +80,7 @@ class GameManager:
             return
         phase, arg = result
 
+        self.clearDeadWorms()
         if phase == "MoveWormPhase":
             self.turnPhase = MoveWormPhase()
         elif phase == "RunSim":
@@ -92,13 +95,20 @@ class GameManager:
 
     def removeWorm(self, worm):
         index = self.listWorms.index(worm)
-        if self.focusedWorm >= index:
+        if self.focusedWorm > index:
             self.focusedWorm -= 1
         self.listWorms.remove(worm)
+        if self.focusedWorm < 0 or self.focusedWorm >= len(self.listWorms):
+            self.focusedWorm = 0
 
     def ChangeTurn(self):
         self.focusedWorm += 1
         self.focusedWorm = self.focusedWorm % len(self.listWorms)
+
+    def clearDeadWorms(self):
+        for w in self.listWorms:
+            if w.isDead():
+                w.destroy()
 
 InitUI()
 GameManager().main()

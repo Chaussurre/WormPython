@@ -34,4 +34,5 @@ class DynamicObject:
         self.position += direction
 
     def destroy(self):
-        Globals.listDynamicObjects.remove(self)
+        if self in Globals.listDynamicObjects:
+            Globals.listDynamicObjects.remove(self)

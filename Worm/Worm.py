@@ -4,6 +4,7 @@ import Globals
 import pygame
 from Physics.PhysicObject import PhysicObject
 from Input import Input
+from Physics import Trajectory
 from UI.Panel import Panel
 
 LifeMax = 100
@@ -47,3 +48,7 @@ class Worm(PhysicObject):
 
     def destroy(self):
         super().destroy()
+        Globals.MainGame.removeWorm(self)
+
+    def isDead(self):
+        return not Trajectory.isInBounds(self.position) or self.life <= 0

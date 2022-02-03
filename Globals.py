@@ -12,11 +12,11 @@ WeaponSelected = None
 MainGame = None
 
 #parameters
-CollisionTestRate = 60
+CollisionTestRate = 40
 ScreenSize = (1000, 600)
-FrameRate = 60
+FrameRate = 20
 Gravity = numpy.array((0, 250))
 TerrainSize = 30
 Bounciness = 0.4
-MoveJumps = numpy.array((30, -100))
+MoveJumps = numpy.array((60, -130))
 Font = "Comic Sans MS"

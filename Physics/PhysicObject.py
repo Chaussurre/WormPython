@@ -66,4 +66,5 @@ class PhysicObject(DynamicObject):
 
     def destroy(self):
         super().destroy()
-        Globals.listPhysicObjects.remove(self)
+        if self in Globals.listPhysicObjects:
+            Globals.listPhysicObjects.remove(self)

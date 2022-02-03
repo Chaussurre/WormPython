@@ -52,7 +52,7 @@ class Trajectory:
         while predictTime > currentTraj.endTime and currentTraj.Next is not None:
             currentTraj = currentTraj.Next
         for i in range(0, 5000, step):
-            predictTime += 1.0 / Globals.FrameRate * step
+            predictTime += 1.0 / Globals.CollisionTestRate * step
             if predictTime > currentTraj.endTime:
                 predictTime = currentTraj.endTime
                 if currentTraj.Next is not None:
@@ -94,7 +94,7 @@ class Trajectory:
                     if np.linalg.norm(newVel, 2) > 5:
                         self.impulseAt(newVel, time)
                         return True
-                    if self.endTime < self.startTime + 0.02:
+                    if self.endTime < self.startTime + 0.2:
                         self.endTime = self.startTime
                     return False
             self.lastCheckedPos = self.GetPoint(time)
@@ -109,11 +109,7 @@ class Trajectory:
 
     def isInBounds(self, time):
         pos = self.GetPoint(time)
-        if -40 > pos[0] or pos[0] > Globals.ScreenSize[0] + 40 - UIGlobals.weaponPanelSize:
-            return False
-        if -40 > pos[1] or pos[1] > Globals.ScreenSize[1] + 40:
-            return False
-        return True
+        return isInBounds(pos)
 
     def addEvent(self, time, event):
         self.events[time] = event
@@ -155,3 +151,11 @@ def printTrajectories(time=0, color="red"):
     for PO in Globals.listPhysicObjects:
         if PO.trajectory is not None:
             PO.trajectory.print(time, color=color)
+
+
+def isInBounds(pos):
+    if -40 > pos[0] or pos[0] > Globals.ScreenSize[0] + 40 - UIGlobals.weaponPanelSize:
+        return False
+    if -40 > pos[1] or pos[1] > Globals.ScreenSize[1] + 40:
+        return False
+    return True
