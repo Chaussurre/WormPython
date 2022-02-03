@@ -14,7 +14,7 @@ LifeBarSize = 50
 class Worm(PhysicObject, pygame.sprite.Sprite):
     def __init__(self, position=np.array((0.0, 0.0)), velocity=np.array((0.0, 0.0)), team="green"):
         PhysicObject.__init__(self, position=position, velocity=velocity, size=15)
-        self.image = pygame.image.load("D:/Cours 2021-2022/Python/WormPython/Worm/Sprite/POYO.png")
+        self.image = pygame.image.load("Sprites/POYO.png")
         self.team = team
         self.lifeBar = Panel(color="red")
         self.lifePanel = Panel(color="white", size=np.array((LifeBarSize + 2, 12)))
