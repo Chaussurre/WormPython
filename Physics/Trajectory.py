@@ -78,7 +78,7 @@ class Trajectory:
                 if self.Next is not None:
                     return self.Next.CheckTime(time)
                 return False
-            elif not self.isInBounds(time):
+            elif not self.isInBounds(time - 0.5):
                 self.GetLastTrajectory().endTime = time
                 return False
             else:

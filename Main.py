@@ -40,7 +40,7 @@ class GameManager:
         clock = pygame.time.Clock()
         self.turnPhase = RunSim()
         try:
-            while self.running:
+            while self.running and not self.isGameOver():
                 clock.tick(Globals.FrameRate)
                 self.updateEvents()
                 Globals.Screen.fill((0, 0, 0))
@@ -109,6 +109,10 @@ class GameManager:
         for w in self.listWorms:
             if w.isDead():
                 w.destroy()
+
+    def isGameOver(self):
+        team = self.movingWorm.team
+        return all(map(lambda x: x.team == team, self.listWorms))
 
 InitUI()
 GameManager().main()
