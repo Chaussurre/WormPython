@@ -37,4 +37,6 @@ class Explosion(DynamicObject):
                     relative = PO.position - position
                     distance = np.linalg.norm(relative)
                     force = self.force / ((distance / 100) ** 2)
+                    if force > self.force * 10:
+                        force = self.force * 10
                     PO.impulseAt(relative / distance * force, time)

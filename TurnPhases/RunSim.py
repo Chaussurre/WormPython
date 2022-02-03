@@ -1,3 +1,5 @@
+import numpy as np
+
 import Globals
 from Physics import Trajectory
 from UI import UILayout, UIGlobals

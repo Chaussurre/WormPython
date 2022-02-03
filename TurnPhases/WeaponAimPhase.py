@@ -20,6 +20,7 @@ class WeaponAimPhase:
     def update(self):
         if Input.mouseClickDown(0):
             self.endPhase()
+            self.mainGame.ChangeTurn()
             return "RunSim", self.endTimeSim
 
         for x in Globals.listPhysicObjects:

@@ -93,6 +93,8 @@ class Trajectory:
                     if np.linalg.norm(newVel, 2) > 5:
                         self.impulseAt(newVel, time)
                         return True
+                    if self.endTime < self.startTime + 0.02:
+                        self.endTime = self.startTime
                     return False
             self.lastCheckedPos = self.GetPoint(time)
             return True
@@ -118,14 +120,15 @@ def UpdateTrajectories():
     changed = True
     for x in Globals.listPhysicObjects:
         x.startPrediction()
+        if x.trajectory is None:
+            x.impulse(np.array((0, 0)))
     while time < 50 and changed:
         changed = False
         time += 1.0 / Globals.CollisionTestRate
         for x in Globals.listPhysicObjects:
             x.predictActionAt(time)
-            if x.trajectory is not None:
-                if x.trajectory.CheckTime(time):
-                    changed = True
+            if x.trajectory.CheckTime(time):
+                changed = True
     return time
 
 

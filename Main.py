@@ -89,6 +89,9 @@ class GameManager:
     def addWorm(self, position, team="green"):
         self.listWorms.append(Worm(position, team=team))
 
+    def ChangeTurn(self):
+        self.focusedWorm += 1
+        self.focusedWorm = self.focusedWorm % len(self.listWorms)
 
 InitUI()
 GameManager().main()
