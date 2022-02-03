@@ -11,9 +11,10 @@ LifeMax = 100
 LifeBarSize = 50
 
 
-class Worm(PhysicObject):
+class Worm(PhysicObject, pygame.sprite.Sprite):
     def __init__(self, position=np.array((0.0, 0.0)), velocity=np.array((0.0, 0.0)), team="green"):
         PhysicObject.__init__(self, position=position, velocity=velocity, size=15)
+        self.image = pygame.image.load("D:/Cours 2021-2022/Python/WormPython/Worm/Sprite/POYO.png")
         self.team = team
         self.lifeBar = Panel(color="red")
         self.lifePanel = Panel(color="white", size=np.array((LifeBarSize + 2, 12)))
@@ -27,9 +28,10 @@ class Worm(PhysicObject):
             self.lifeBar.size = np.array((self.life / LifeMax * LifeBarSize, 10))
             self.lifeBar.position = self.lifePanel.position - (LifeMax - self.life) / LifeMax * LifeBarSize / 2 * np.array((1, 0))
             self.lifePanel.drawUI()
-        pygame.draw.circle(Globals.Screen, self.team, self.screenPosition, 10)
-        pygame.draw.circle(Globals.Screen, "black", self.screenPosition, 12, 2)
-        pygame.draw.circle(Globals.Screen, "white", self.screenPosition, 15, 3)
+        #pygame.draw.circle(Globals.Screen, self.team, self.screenPosition, 10)
+        #pygame.draw.circle(Globals.Screen, "black", self.screenPosition, 12, 2)
+        pygame.draw.circle(Globals.Screen, self.team, self.screenPosition, 15, 3)
+        Globals.Screen.blit(self.image, pygame.draw.circle(Globals.Screen, self.team, self.screenPosition, 10))
 
     def inputMove(self):
         xMove = Input.GetKeyBoardDirection()[0]
