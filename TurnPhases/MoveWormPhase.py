@@ -34,5 +34,5 @@ class MoveWormPhase:
         worm = Globals.MainGame.movingWorm
         if worm.inputMove():
             self.stopListen()
-            return "RunSim", None
+            return "RunSim",
         return None

@@ -5,6 +5,7 @@ import pygame.gfxdraw
 import Globals
 from Input import Input
 from Physics.Terrain import Terrain
+from TurnPhases.StopTime import StopTime
 from TurnPhases.MoveWormPhase import MoveWormPhase
 from TurnPhases.RunSim import RunSim
 from TurnPhases.WeaponAimPhase import WeaponAimPhase
@@ -20,7 +21,7 @@ class GameManager:
         self.running = True
         self.turnPhase = None
         self.listWorms = []
-        self.focusedWorm = 0
+        self.focusedWorm = -1
         pygame.init()
         Globals.Screen = pygame.display.set_mode(Globals.ScreenSize)
         pygame.display.set_caption("Best worm game", "")
@@ -78,15 +79,18 @@ class GameManager:
     def ChangePhase(self, result):
         if result is None:
             return
-        phase, arg = result
+        phase = result[0]
+        args = result[1:]
 
         self.clearDeadWorms()
         if phase == "MoveWormPhase":
             self.turnPhase = MoveWormPhase()
         elif phase == "RunSim":
-            self.turnPhase = RunSim(arg)
+            self.turnPhase = RunSim(*args)
         elif phase == "WeaponAimPhase":
-            self.turnPhase = WeaponAimPhase(arg)
+            self.turnPhase = WeaponAimPhase(*args)
+        elif phase == "StopTime":
+            self.turnPhase = StopTime(*args)
         else:
             print("do not know phase:", phase)
 

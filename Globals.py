@@ -12,6 +12,7 @@ WeaponSelected = None
 MainGame = None
 
 #parameters
+TimeSlowSpace = 1.0/5.0
 CollisionTestRate = 40
 ScreenSize = (1000, 600)
 FrameRate = 20

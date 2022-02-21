@@ -7,23 +7,25 @@ from UI.UIGlobals import listWeaponButtons
 
 
 class WeaponAimPhase:
-    def __init__(self, weapon):
+    def __init__(self, weapon, endTime=0):
         self.weapon = weapon
         for b in listWeaponButtons:
             b.visible = False
             b.active = False
         self.worm = Globals.MainGame.movingWorm
         self.projectile = weapon.createProjectile(self.worm)
-        self.endTimeSim = 0
+        self.endTimeSim = endTime
+        self.initConditions = []
+        for PO in Globals.listPhysicObjects:
+            self.initConditions.append((PO, PO.getVelocity(0)))
 
     def update(self):
         if Input.mouseClickDown(0):
             self.endPhase()
-            Globals.MainGame.ChangeTurn()
-            return "RunSim", self.endTimeSim
+            return "RunSim", 0, self.endTimeSim
 
-        for x in Globals.listPhysicObjects:
-            x.trajectory = None
+        for PO, speed in self.initConditions:
+            PO.impulse(speed)
 
         relative = Input.mousePos() - self.worm.position
         self.projectile.impulse(relative)
