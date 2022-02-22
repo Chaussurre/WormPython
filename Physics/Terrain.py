@@ -49,20 +49,48 @@ class Terrain:
         for l in self.edges:
             pygame.draw.line(Globals.Screen, "white", self.nodes[l[0]], self.nodes[l[1]], Globals.TerrainSize * 2)
 
+        for zone in self.destroyedZones:
+            pygame.draw.circle(Globals.Screen, "black", zone.position, zone.size)
+        for collider, pos, t in self.nextDestroyedZones:
+            if time >= t:
                 pygame.draw.circle(Globals.Screen, "black", pos, collider.size)
 
     def getCollision(self, collider, center=None, time=0):
         if center is None:
             center = collider.position
 
-        for line in self.edges:
-            start = self.nodes[line[0]]
-            lineUnit = self.nodes[line[1]] - start
-            lineSize = np.linalg.norm(lineUnit, 2)
-            lineUnit /= lineSize
+        collision = self.getNonDestroyedCollision(collider, center)
+
+        if collision is None:
             return None
 
-            relative = center - start
+        destroyedZones = []
+        for zone in self.destroyedZones:
+            if zone.getCollision(collider, otherCenter=center) is not None:
+                destroyedZones.append((zone, zone.position))
+        for zone, c, t in self.nextDestroyedZones:
+            if t <= time and zone.getCollision(collider, center=c, otherCenter=center):
+                destroyedZones.append((zone, c))
+
+        delta = collision.delta / np.linalg.norm(collision.delta) * collider.size
+        if not isPointCoveredBy(center + delta, destroyedZones):
+            return collision
+
+        points = []
+        for n in range(0, 100):
+            angle = 2 * 3.14 * n / 100
+            point = np.array((np.cos(angle), np.sin(angle))) * collider.size + center
+            if self.isPointInTerrain(point, destroyedZones):
+                points.append(point)
+
+        if len(points) == 0:
+            return None
+
+        delta = np.array((0.0, 0.0))
+        for point in points:
+            delta += center - point
+        delta /= len(points)
+
         return Collision(collider, None, delta, center)
 
     def getNonDestroyedCollision(self, collider, center=None):
