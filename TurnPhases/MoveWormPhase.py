@@ -22,6 +22,7 @@ class MoveWormPhase:
         self.chosenWeapon = weapon
 
     def update(self):
+        Globals.Terrain.draw(0)
         if self.chosenWeapon is not None:
             return "WeaponAimPhase", self.chosenWeapon
 

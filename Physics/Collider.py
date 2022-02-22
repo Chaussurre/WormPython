@@ -40,7 +40,7 @@ class Collider:
     def getCollisions(self, time, center):
         colliding = []
 
-        terrainCollision = Globals.Terrain.getCollision(self, center)
+        terrainCollision = Globals.Terrain.getCollision(self, center, time)
         if terrainCollision is not None:
             colliding.append(terrainCollision)
 

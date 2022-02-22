@@ -20,9 +20,12 @@ class WeaponAimPhase:
             self.initConditions.append((PO, PO.getVelocity(0)))
 
     def update(self):
+        Globals.Terrain.draw(0)
         if Input.mouseClickDown(0):
             self.endPhase()
             return "RunSim", 0, self.endTimeSim
+
+        Globals.Terrain.nextDestroyedZones.clear()
 
         for PO, speed in self.initConditions:
             PO.impulse(speed)

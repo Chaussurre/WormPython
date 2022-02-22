@@ -45,7 +45,6 @@ class GameManager:
                 clock.tick(Globals.FrameRate)
                 self.updateEvents()
                 Globals.Screen.fill((0, 0, 0))
-                Globals.Terrain.draw()
                 self.playTurnPhase()
                 UIGlobals.RootUI.drawUI()
                 pygame.display.flip()

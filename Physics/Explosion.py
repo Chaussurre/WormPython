@@ -32,6 +32,9 @@ class Explosion(DynamicObject):
         self.visibleAt = time
         self.position = position
         self.exploded = True
+
+        Globals.Terrain.destroy(self.collider, position, time)
+
         colliding = self.collider.getCollisions(time, position)
         for c in colliding:
             if c.otherCollider is not None:

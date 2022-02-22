@@ -19,7 +19,7 @@ class StopTime:
         self.endTime = endTime
 
     def update(self):
-
+        Globals.Terrain.draw(self.time)
         Trajectory.printTrajectories(time=self.time)
         for DO in Globals.listDynamicObjects:
             DO.update(self.time)

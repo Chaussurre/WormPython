@@ -18,6 +18,7 @@ class RunSim:
         self.canBeStopped = canBeStopped
 
     def update(self):
+        Globals.Terrain.draw(self.time)
         Trajectory.printTrajectories(self.time)
         for DO in Globals.listDynamicObjects:
             DO.update(self.time)
@@ -33,6 +34,6 @@ class RunSim:
         if self.time >= self.endSimTime:
             for x in [x for x in Globals.listPhysicObjects if x.aliveTimer != float("inf")]:
                 x.destroy()
-            Globals.MainGame.ChangeTurn()
+            Globals.Terrain.updateDestroyedZones()
             return "MoveWormPhase",
         return None

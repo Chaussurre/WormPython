@@ -31,7 +31,7 @@ class Grenade(Projectile):
 
     def predictActionAt(self, time):
         if time > Timer:
-            self.explosion.detonateAt(time, self.trajectory.GetPoint(time))
+            self.explosion.detonateAt(Timer, self.trajectory.GetPoint(Timer))
 
     def startPrediction(self):
         self.explosion.exploded = False
