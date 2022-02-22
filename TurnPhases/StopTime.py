@@ -4,6 +4,7 @@ import Globals
 import Input.Input
 from EventManager.EventManager import eventManager
 from Physics import Trajectory
+from Physics.TimedTrajectory import TimedTrajectory
 from UI import UIGlobals
 from Weapon.WeaponList.WeaponList import listWeapons
 
@@ -28,6 +29,7 @@ class StopTime:
             self.stopListen()
             for PO in Globals.listPhysicObjects:
                 PO.impulse(PO.trajectory.GetVelocity(self.time))
+                PO.aliveTimer -= self.time
             return "WeaponAimPhase", self.chosenWeapon
 
         if Input.Input.IsKeyUp(pygame.K_SPACE):
