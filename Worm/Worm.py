@@ -42,6 +42,8 @@ class Worm(PhysicObject, pygame.sprite.Sprite):
         return xMove != 0
 
     def dealDamage(self, damage):
+        if damage < 0:
+            damage = 0
         self.life -= damage
         if self.life < 0:
             self.life = 0

@@ -4,7 +4,8 @@ import pygame.gfxdraw
 
 import Globals
 from Input import Input
-from Physics.Terrain import Terrain
+from Physics.Terrain import GenTerrain
+from Physics.Trajectory import UpdateTrajectories
 from TurnPhases.StopTime import StopTime
 from TurnPhases.MoveWormPhase import MoveWormPhase
 from TurnPhases.RunSim import RunSim
@@ -32,12 +33,8 @@ class GameManager:
         return self.listWorms[self.focusedWorm]
 
     def main(self):
-        Globals.Terrain = self.createTerrain()
-        self.addWorm(position=np.array((150, 300)), team="green")
-        self.addWorm(position=np.array((350, 300)), team="yellow")
-        self.addWorm(position=np.array((450, 300)), team="green")
-        self.addWorm(position=np.array((650, 300)), team="yellow")
-
+        GenTerrain()
+        self.initWorms()
         clock = pygame.time.Clock()
         self.turnPhase = RunSim()
         try:
@@ -50,6 +47,19 @@ class GameManager:
                 pygame.display.flip()
         finally:
             pygame.quit()
+
+    def initWorms(self):
+        self.addWorm(position=np.array((150, 000)), team="green")
+        self.addWorm(position=np.array((350, 000)), team="yellow")
+        self.addWorm(position=np.array((450, 000)), team="green")
+        self.addWorm(position=np.array((650, 000)), team="yellow")
+        for w in self.listWorms:
+            w.impulse(np.array((0, 0)))
+        UpdateTrajectories()
+        for w in self.listWorms:
+            if w.trajectory.Next is not None:
+                w.position = w.trajectory.Next.GetPoint(w.trajectory.Next.startTime)
+                w.impulse(np.array((0, 0)))
 
     def playTurnPhase(self):
         if self.turnPhase is None:
@@ -67,13 +77,6 @@ class GameManager:
             if event.type == pygame.KEYUP:
                 Input.SetKeyUp(event.key)
             event = pygame.event.poll()
-
-    def createTerrain(self):
-        terrain = Terrain()
-        terrain.addNode((100, 400))
-        terrain.addNode((700, 400))
-        terrain.link(0, 1)
-        return terrain
 
     def ChangePhase(self, result):
         if result is None:

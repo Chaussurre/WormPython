@@ -1,13 +1,17 @@
+import random
+
 import numpy as np
 import pygame
 import Globals
 from Physics.Collision import Collision
+from UI import UIGlobals
 
 
 class Terrain:
     def __init__(self):
         self.nodes = []
         self.nodeLinks = []
+        self.triangles = []
         self.destroyedZones = []
         self.nextDestroyedZones = []
 
@@ -26,6 +30,11 @@ class Terrain:
             node1, node2 = node2, node1
         if node2 not in self.nodeLinks[node1]:
             self.nodeLinks[node1].append(node2)
+
+    def addTriangle(self, node1, node2, node3):
+        t = tuple(sorted((node1, node2, node3)))
+        if t not in self.triangles:
+            self.triangles.append(t)
 
     def destroy(self, collider, center=None, time=0):
         if center is None:
@@ -46,8 +55,11 @@ class Terrain:
         for p in self.nodes:
             pygame.draw.circle(Globals.Screen, "white", p, Globals.TerrainSize)
 
-        for l in self.edges:
-            pygame.draw.line(Globals.Screen, "white", self.nodes[l[0]], self.nodes[l[1]], Globals.TerrainSize * 2)
+        for a, b in self.edges:
+            pygame.draw.line(Globals.Screen, "white", self.nodes[a], self.nodes[b], Globals.TerrainSize * 2)
+
+        for t in self.triangles:
+            pygame.draw.polygon(Globals.Screen, "white", list(map(lambda x: self.nodes[x], t)))
 
         for zone in self.destroyedZones:
             pygame.draw.circle(Globals.Screen, "black", zone.position, zone.size)
@@ -61,7 +73,7 @@ class Terrain:
 
         collision = self.getNonDestroyedCollision(collider, center)
 
-        if collision is None:
+        if collision is None and not self.isPointInTerrain(center, []):
             return None
 
         destroyedZones = []
@@ -72,9 +84,10 @@ class Terrain:
             if t <= time and zone.getCollision(collider, center=c, otherCenter=center):
                 destroyedZones.append((zone, c))
 
-        delta = collision.delta / np.linalg.norm(collision.delta) * collider.size
-        if not isPointCoveredBy(center + delta, destroyedZones):
-            return collision
+        if collision is not None:
+            delta = collision.delta / np.linalg.norm(collision.delta) * collider.size
+            if not isPointCoveredBy(center + delta, destroyedZones):
+                return collision
 
         points = []
         for n in range(0, 100):
@@ -112,6 +125,26 @@ class Terrain:
         for node in self.nodes:
             if np.linalg.norm(node - point, 2) < Globals.TerrainSize:
                 return True
+
+        def TriangleArea(t):
+            p1, p2, p3 = t
+            l1 = np.linalg.norm(p1 - p2)
+            l2 = np.linalg.norm(p1 - p3)
+            l3 = np.linalg.norm(p3 - p2)
+            semi = (l1 + l2 + l3) / 2
+            s = semi * (semi - l1) * (semi - l2) * (semi - l3)
+            if s < 0:
+                return 0
+            return np.sqrt(s)
+
+        for a, b, c in self.triangles:
+            triangles = [(point, self.nodes[b], self.nodes[c]),
+                         (self.nodes[a], point, self.nodes[c]),
+                         (self.nodes[a], self.nodes[b], point)]
+            mainTriangle = [self.nodes[a], self.nodes[b], self.nodes[c]]
+            if np.abs(sum(map(TriangleArea, triangles)) - TriangleArea(mainTriangle)) < 10:
+                return True
+
         return False
 
     def getNormalWithEdge(self, point, edge):
@@ -158,3 +191,42 @@ def isPointCoveredBy(point, zones):
         if zone.HasPoint(point, center=center):
             return True
     return False
+
+
+def GenTerrain(genAlgo="block"):
+    if genAlgo == "block":
+        genBlockTerrain()
+    else:
+        terrain = Terrain()
+        terrain.addNode((100, 400))
+        terrain.addNode((700, 400))
+        terrain.link(0, 1)
+        Globals.Terrain = terrain
+        print("doesn't know generation algo", genAlgo)
+
+
+# terrain gen parameters
+numPoint = 15
+HorizontalVariance = 0.8, 1
+VerticalVariance = 0.3, 0.7
+
+
+def genBlockTerrain():
+    terrain = Terrain()
+    size = np.array(((Globals.ScreenSize[0] - UIGlobals.weaponPanelSize), Globals.ScreenSize[1]))
+    center = size / 2 + np.array((0, 100))
+    terrain.addNode(center)
+    last = None
+    for i in range(1, numPoint):
+        var = random.uniform(*HorizontalVariance), random.uniform(*VerticalVariance)
+        angle = i / numPoint * 3.14 * 2
+        point = np.array((np.cos(angle) * size[0] / 2 * var[0],
+                          np.sin(angle) * size[1] / 2 * var[1]))
+        terrain.addNode(point + center)
+        if last is not None:
+            terrain.link(last, i)
+            terrain.addTriangle(0, last, i)
+        last = i
+    terrain.addTriangle(0, last, 1)
+    terrain.link(last, 1)
+    Globals.Terrain = terrain
