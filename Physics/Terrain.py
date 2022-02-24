@@ -203,9 +203,9 @@ def GenTerrain(genAlgo="block"):
 
 
 # terrain gen parameters
-numPoint = 20
+numPoint = 30
 HorizontalVariance = 0.8, 1
-VerticalVariance = 0.3, 0.7
+VerticalVariance = 0.1, 1
 
 
 def genBlockTerrain():
