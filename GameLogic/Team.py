@@ -24,9 +24,11 @@ class Team:
 
     def getNextPlaying(self):
         if self.isAlive():
-            worm = self.listWorms[self.wormIndex]
+            return self.listWorms[self.wormIndex]
+        return None
+
+    def setNextWorm(self):
+        if self.isAlive():
             self.wormIndex += 1
             self.wormIndex = self.wormIndex % len(self.listWorms)
-            return worm
-        return None
 

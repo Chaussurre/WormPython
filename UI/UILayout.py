@@ -2,6 +2,7 @@ import numpy as np
 
 import Globals
 from UI import UIGlobals
+from UI.AmmoCount import AmmoCount
 from UI.Panel import Panel
 from Weapon.WeaponButton import WeaponButton
 from Weapon.WeaponList.WeaponList import listWeapons
@@ -16,5 +17,4 @@ def InitUI():
     for w in listWeapons:
         WeaponPanel.addChild(WeaponButton(w))
 
-
-
+    UIGlobals.RootUI.addChild(AmmoCount())

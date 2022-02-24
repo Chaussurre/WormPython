@@ -10,9 +10,9 @@ from Weapon.WeaponList.WeaponList import listWeapons
 
 
 class StopTime:
-    def __init__(self, time, endTime):
+    def __init__(self, time, endTime, canShoot):
         for button in UIGlobals.listWeaponButtons:
-            button.active = True
+            button.active = canShoot
         self.chosenWeapon = None
         for w in listWeapons:
             eventManager.addListener(w.eventChoose, self.chooseWeapon)

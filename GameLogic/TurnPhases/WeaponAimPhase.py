@@ -1,6 +1,7 @@
 import numpy as np
 
 import Globals
+from EventManager.EventManager import eventManager
 from Input import Input
 from Physics import Trajectory
 from UI.UIGlobals import listWeaponButtons
@@ -23,6 +24,7 @@ class WeaponAimPhase:
         Globals.Terrain.draw(0)
         if Input.mouseClickDown(0):
             self.endPhase()
+            eventManager.triggerEvent("shot", self.weapon)
             return "RunSim", 0, self.endTimeSim
 
         Globals.Terrain.nextDestroyedZones.clear()

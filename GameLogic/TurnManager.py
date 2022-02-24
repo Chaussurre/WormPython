@@ -5,6 +5,7 @@ import numpy as np
 import Globals
 
 # Parameters
+from EventManager.EventManager import eventManager
 from GameLogic.Team import Team
 from GameLogic.TurnPhases.MoveWormPhase import MoveWormPhase
 from GameLogic.TurnPhases.RunSim import RunSim
@@ -41,13 +42,16 @@ class TurnManager:
 
         self.clearDeadWorms()
         if phase == "MoveWormPhase":
+            if self.nbActions == 0:
+                self.nextTurn()
             self.turnPhase = MoveWormPhase()
         elif phase == "RunSim":
             self.turnPhase = RunSim(*args)
         elif phase == "WeaponAimPhase":
+            self.nbActions -= 1
             self.turnPhase = WeaponAimPhase(*args)
         elif phase == "StopTime":
-            self.turnPhase = StopTime(*args)
+            self.turnPhase = StopTime(*args, self.nbActions > 0)
         else:
             print("do not know phase:", phase)
 
@@ -76,12 +80,16 @@ class TurnManager:
                 worm.impulse(np.array((0, 0)))
 
     def nextTurn(self):
+        eventManager.triggerEvent("new turn")
         self.playingTeam += 1
         self.playingTeam %= len(self.Teams)
+        self.Teams[self.playingTeam].setNextWorm()
         self.startTurn(self.Teams[self.playingTeam].getNextPlaying)
 
     def clearDeadWorms(self):
         for t in self.Teams:
             for w in t.listWorms:
                 if w.isDead():
+                    if w == self.movingWorm:
+                        self.nextTurn()
                     w.destroy()
