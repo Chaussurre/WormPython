@@ -1,15 +1,18 @@
 import random
 
 import numpy as np
+import pygame.draw
 
 import Globals
 
 # Parameters
 from EventManager.EventManager import eventManager
 from GameLogic.Team import Team
+from GameLogic.TurnPhases.IntroNewTurn import IntroNewTurn
 from GameLogic.TurnPhases.MoveWormPhase import MoveWormPhase
 from GameLogic.TurnPhases.RunSim import RunSim
 from GameLogic.TurnPhases.StopTime import StopTime
+from GameLogic.TurnPhases.VictoryScreen import VictoryScreen
 from GameLogic.TurnPhases.WeaponAimPhase import WeaponAimPhase
 from Physics.Trajectory import UpdateTrajectories
 from Worm.Worm import Worm
@@ -19,7 +22,6 @@ ActionPerTurn = 2
 
 class TurnManager:
     def __init__(self):
-        self.worm = None
         self.nbActions = 0
         self.Teams = []
         self.playingTeam = 0
@@ -32,7 +34,8 @@ class TurnManager:
     def update(self):
         if self.turnPhase is None:
             return
-        self.changePhase(self.turnPhase.update())
+        newPhase = self.turnPhase.update()
+        self.changePhase(newPhase)
 
     def changePhase(self, result):
         if result is None:
@@ -40,11 +43,25 @@ class TurnManager:
         phase = result[0]
         args = result[1:]
 
+        nbTeam = len(list(filter(lambda team: team.isAlive(), self.Teams)))
+        if nbTeam == 1:
+            self.turnPhase = VictoryScreen(list(filter(lambda team: team.isAlive(), self.Teams))[0])
+            return
+        if nbTeam == 0:
+            self.turnPhase = VictoryScreen(None)
+            return
+
+        if self.movingWorm.isDead():
+            self.clearDeadWorms()
+            self.startTurn()
+            return
+
         self.clearDeadWorms()
         if phase == "MoveWormPhase":
             if self.nbActions == 0:
-                self.nextTurn()
-            self.turnPhase = MoveWormPhase()
+                self.startTurn()
+            else:
+                self.turnPhase = MoveWormPhase()
         elif phase == "RunSim":
             self.turnPhase = RunSim(*args)
         elif phase == "WeaponAimPhase":
@@ -55,15 +72,25 @@ class TurnManager:
         else:
             print("do not know phase:", phase)
 
-    def startTurn(self, worm):
-        if self.turnPhase is None:
-            self.turnPhase = RunSim()
-        self.worm = worm
+    def initTurn(self):
+        eventManager.triggerEvent("new turn")
+        self.turnPhase = RunSim()
+
+    def startTurn(self):
+        eventManager.triggerEvent("new turn")
+        if self.movingWorm is None:
+            return
+        self.movingWorm.active = False
+        self.playingTeam += 1
+        self.playingTeam %= len(self.Teams)
+        self.Teams[self.playingTeam].setNextWorm()
+        self.movingWorm.active = True
         self.nbActions = ActionPerTurn
+        self.turnPhase = IntroNewTurn(self.Teams[self.playingTeam])
 
     def createTeams(self, *colors):
         for color in colors:
-            self.Teams.append(Team(color))
+            self.Teams.append(Team(color, color))
 
     def createWorms(self, *positions):
         positions = list(map(np.array, positions))
@@ -79,17 +106,8 @@ class TurnManager:
                 worm.position = worm.trajectory.Next.GetPoint(worm.trajectory.Next.startTime)
                 worm.impulse(np.array((0, 0)))
 
-    def nextTurn(self):
-        eventManager.triggerEvent("new turn")
-        self.playingTeam += 1
-        self.playingTeam %= len(self.Teams)
-        self.Teams[self.playingTeam].setNextWorm()
-        self.startTurn(self.Teams[self.playingTeam].getNextPlaying)
-
     def clearDeadWorms(self):
         for t in self.Teams:
             for w in t.listWorms:
                 if w.isDead():
-                    if w == self.movingWorm:
-                        self.nextTurn()
                     w.destroy()

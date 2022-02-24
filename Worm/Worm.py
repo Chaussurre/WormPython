@@ -24,6 +24,7 @@ class Worm(PhysicObject, pygame.sprite.Sprite):
         self.lifePanel.addChild(Panel(color="black", size=np.array((LifeBarSize, 10))))
         self.lifePanel.addChild(self.lifeBar)
         self.life = LifeMax
+        self.active = False
 
     def draw(self, _):
         if self.life > 0:
@@ -31,6 +32,8 @@ class Worm(PhysicObject, pygame.sprite.Sprite):
             self.lifeBar.size = np.array((self.life / LifeMax * LifeBarSize, 10))
             self.lifeBar.position = self.lifePanel.position - (LifeMax - self.life) / LifeMax * LifeBarSize / 2 * np.array((1, 0))
             self.lifePanel.drawUI()
+        if self.active:
+            pygame.draw.circle(Globals.Screen, "red", self.position, 18)
         pygame.draw.circle(Globals.Screen, self.team.color, self.screenPosition, 15)
         Globals.Screen.blit(self.image, (self.x - 15, self.y - 16))
 

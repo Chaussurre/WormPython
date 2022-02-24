@@ -2,6 +2,7 @@ import pygame
 import pygame.gfxdraw
 
 import Globals
+from EventManager.EventManager import eventManager
 from GameLogic.TurnManager import TurnManager
 from Input import Input
 from Physics.Terrain import GenTerrain
@@ -19,6 +20,7 @@ class GameManager:
         Globals.Screen = pygame.display.set_mode(Globals.ScreenSize)
         pygame.display.set_caption("Best worm game", "")
         Globals.Screen.fill((0, 0, 0))
+        eventManager.addListener("quit", self.setGameOver)
 
     @property
     def movingWorm(self):
@@ -27,10 +29,10 @@ class GameManager:
     def main(self):
         GenTerrain()
         self.initWorms()
-        self.TurnManager.startTurn(0)
+        self.TurnManager.initTurn()
         clock = pygame.time.Clock()
         try:
-            while self.running and not self.isGameOver():
+            while self.running:
                 clock.tick(Globals.FrameRate)
                 self.updateEvents()
                 Globals.Screen.fill((0, 0, 0))
@@ -64,9 +66,9 @@ class GameManager:
                 Input.SetKeyUp(event.key)
             event = pygame.event.poll()
 
-    def isGameOver(self):
-        aliveTeams = [t for t in self.TurnManager.Teams if t.isAlive]
-        return len(aliveTeams) <= 1
+    def setGameOver(self):
+        self.running = False
+
 
 InitUI()
 GameManager().main()
