@@ -26,9 +26,6 @@ class MoveWormPhase:
         if self.chosenWeapon is not None:
             return "WeaponAimPhase", self.chosenWeapon
 
-        if len(Globals.MainGame.listWorms) == 0:
-            return None
-
         for x in Globals.listDynamicObjects:
             x.update(0)
 

@@ -73,16 +73,13 @@ class Terrain:
 
         collision = self.getNonDestroyedCollision(collider, center)
 
-        if collision is None and not self.isPointInTerrain(center, []):
-            return None
-
-        destroyedZones = []
-        for zone in self.destroyedZones:
-            if zone.getCollision(collider, otherCenter=center) is not None:
-                destroyedZones.append((zone, zone.position))
+        destroyedZones = list(map(lambda x: (x, x.position), self.destroyedZones))
         for zone, c, t in self.nextDestroyedZones:
-            if t <= time and zone.getCollision(collider, center=c, otherCenter=center):
+            if t <= time:
                 destroyedZones.append((zone, c))
+
+        if collision is None and not isPointCoveredBy(center, destroyedZones):
+            return None
 
         if collision is not None:
             delta = collision.delta / np.linalg.norm(collision.delta) * collider.size
@@ -206,7 +203,7 @@ def GenTerrain(genAlgo="block"):
 
 
 # terrain gen parameters
-numPoint = 15
+numPoint = 20
 HorizontalVariance = 0.8, 1
 VerticalVariance = 0.3, 0.7
 

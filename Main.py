@@ -1,18 +1,12 @@
-import numpy as np
 import pygame
 import pygame.gfxdraw
 
 import Globals
+from GameLogic.TurnManager import TurnManager
 from Input import Input
 from Physics.Terrain import GenTerrain
-from Physics.Trajectory import UpdateTrajectories
-from TurnPhases.StopTime import StopTime
-from TurnPhases.MoveWormPhase import MoveWormPhase
-from TurnPhases.RunSim import RunSim
-from TurnPhases.WeaponAimPhase import WeaponAimPhase
 from UI import UIGlobals
 from UI.UILayout import InitUI
-from Worm.Worm import Worm
 
 
 class GameManager:
@@ -20,9 +14,7 @@ class GameManager:
     def __init__(self):
         Globals.MainGame = self
         self.running = True
-        self.turnPhase = None
-        self.listWorms = []
-        self.focusedWorm = -1
+        self.TurnManager = TurnManager()
         pygame.init()
         Globals.Screen = pygame.display.set_mode(Globals.ScreenSize)
         pygame.display.set_caption("Best worm game", "")
@@ -30,13 +22,13 @@ class GameManager:
 
     @property
     def movingWorm(self):
-        return self.listWorms[self.focusedWorm]
+        return self.TurnManager.movingWorm
 
     def main(self):
         GenTerrain()
         self.initWorms()
+        self.TurnManager.startTurn(0)
         clock = pygame.time.Clock()
-        self.turnPhase = RunSim()
         try:
             while self.running and not self.isGameOver():
                 clock.tick(Globals.FrameRate)
@@ -49,22 +41,16 @@ class GameManager:
             pygame.quit()
 
     def initWorms(self):
-        self.addWorm(position=np.array((150, 000)), team="green")
-        self.addWorm(position=np.array((350, 000)), team="yellow")
-        self.addWorm(position=np.array((450, 000)), team="green")
-        self.addWorm(position=np.array((650, 000)), team="yellow")
-        for w in self.listWorms:
-            w.impulse(np.array((0, 0)))
-        UpdateTrajectories()
-        for w in self.listWorms:
-            if w.trajectory.Next is not None:
-                w.position = w.trajectory.Next.GetPoint(w.trajectory.Next.startTime)
-                w.impulse(np.array((0, 0)))
+        self.TurnManager.createTeams("green", "yellow")
+        self.TurnManager.createWorms((250, 000),
+                                     (350, 000),
+                                     (450, 000),
+                                     (550, 000))
 
     def playTurnPhase(self):
-        if self.turnPhase is None:
+        if self.TurnManager is None:
             return
-        self.ChangePhase(self.turnPhase.update())
+        self.TurnManager.update()
 
     def updateEvents(self):
         Input.UpdateKeys()
@@ -78,47 +64,9 @@ class GameManager:
                 Input.SetKeyUp(event.key)
             event = pygame.event.poll()
 
-    def ChangePhase(self, result):
-        if result is None:
-            return
-        phase = result[0]
-        args = result[1:]
-
-        self.clearDeadWorms()
-        if phase == "MoveWormPhase":
-            self.turnPhase = MoveWormPhase()
-        elif phase == "RunSim":
-            self.turnPhase = RunSim(*args)
-        elif phase == "WeaponAimPhase":
-            self.turnPhase = WeaponAimPhase(*args)
-        elif phase == "StopTime":
-            self.turnPhase = StopTime(*args)
-        else:
-            print("do not know phase:", phase)
-
-    def addWorm(self, position, team="green"):
-        self.listWorms.append(Worm(position, team=team))
-
-    def removeWorm(self, worm):
-        index = self.listWorms.index(worm)
-        if self.focusedWorm > index:
-            self.focusedWorm -= 1
-        self.listWorms.remove(worm)
-        if self.focusedWorm < 0 or self.focusedWorm >= len(self.listWorms):
-            self.focusedWorm = 0
-
-    def ChangeTurn(self):
-        self.focusedWorm += 1
-        self.focusedWorm = self.focusedWorm % len(self.listWorms)
-
-    def clearDeadWorms(self):
-        for w in self.listWorms:
-            if w.isDead():
-                w.destroy()
-
     def isGameOver(self):
-        team = self.movingWorm.team
-        return all(map(lambda x: x.team == team, self.listWorms))
+        aliveTeams = [t for t in self.TurnManager.Teams if t.isAlive]
+        return len(aliveTeams) <= 1
 
 InitUI()
 GameManager().main()

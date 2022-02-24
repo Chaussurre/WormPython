@@ -8,7 +8,6 @@ listDynamicObjects = []
 listPhysicObjects = []
 Screen = None
 Terrain = None
-WeaponSelected = None
 MainGame = None
 
 #parameters
