@@ -16,8 +16,10 @@ def InitUI():
                         color=UIGlobals.weaponPanelColor)
     UIGlobals.RootUI.addChild(WeaponPanel)
 
-    for w in listWeapons:
-        WeaponPanel.addChild(WeaponButton(w))
+    for i, w in enumerate(listWeapons):
+        button = WeaponButton(w)
+        button.position += np.array((0, UIGlobals.weaponButtonsSize+UIGlobals.weaponButtonsMargin))*i
+        WeaponPanel.addChild(button)
 
     UIGlobals.RootUI.addChild(AmmoCount())
 
