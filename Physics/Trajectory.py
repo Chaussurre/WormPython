@@ -42,7 +42,7 @@ class Trajectory:
         return time * Globals.Gravity + self.startVelocity
 
     def print(self, time, color="red"):
-        if time > self.physicObject.aliveTimer:
+        if time >= self.physicObject.aliveTimer:
             return
 
         previousPos = self.GetPoint(time)

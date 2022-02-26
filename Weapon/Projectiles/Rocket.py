@@ -7,7 +7,7 @@ from Physics.TimedTrajectory import TimedTrajectory
 from Weapon.Projectile import Projectile
 
 ExplosionSize = 30
-ExplosionForce = 30
+ExplosionForce = 15
 DamageMax = 30
 
 class Rocket(Projectile):
@@ -27,11 +27,12 @@ class Rocket(Projectile):
 
         if time > self.trajectory.endTime:
             self.aliveTimer = self.trajectory.endTime
-            self.trajectory.Next = None
-            self.explosion.detonateAt(time, self.trajectory.GetPoint(time))
+            self.explosion.detonateAt(self.trajectory.endTime, self.trajectory.GetPoint(self.trajectory.endTime))
 
     def startPrediction(self):
         self.explosion.exploded = False
+        self.explosion.visibleAt = float("inf")
+        self.aliveTimer = float("inf")
 
     def destroy(self):
         self.explosion.destroy()
