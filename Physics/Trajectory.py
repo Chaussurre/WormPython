@@ -52,7 +52,11 @@ class Trajectory:
         while predictTime > currentTraj.endTime and currentTraj.Next is not None:
             currentTraj = currentTraj.Next
         for i in range(0, 5000, step):
+            if self.physicObject.aliveTimer == predictTime:
+                return
             predictTime += 1.0 / Globals.CollisionTestRate * step
+            if self.physicObject.aliveTimer < predictTime:
+                predictTime = self.physicObject.aliveTimer
             if predictTime > currentTraj.endTime:
                 predictTime = currentTraj.endTime
                 if currentTraj.Next is not None:
