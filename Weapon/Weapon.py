@@ -5,3 +5,7 @@ class Weapon:
 
     def createProjectile(self, worm):
         pass
+
+    def tryShoot(self, targetPos, worm, projectile):
+        relative = targetPos - worm.position
+        projectile.impulse(relative)

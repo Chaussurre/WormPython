@@ -51,4 +51,4 @@ class Explosion(DynamicObject):
                     if distance > self.collider.size * 0.5:
                         damage = self.damage * (self.collider.size - distance) / (self.collider.size * 0.5)
                     if isinstance(PO, Worm.Worm.Worm):
-                        PO.trajectory.addEvent(time, lambda: PO.dealDamage(damage))
+                        PO.trajectory.addEvent(time, lambda po: po.dealDamage(damage))

@@ -32,8 +32,7 @@ class WeaponAimPhase:
         for PO, speed in self.initConditions:
             PO.impulse(speed)
 
-        relative = Input.mousePos() - self.worm.position
-        self.projectile.impulse(relative)
+        self.weapon.tryShoot(targetPos=Input.mousePos(), worm=self.worm, projectile=self.projectile)
 
         self.endTimeSim = Trajectory.UpdateTrajectories()
         Trajectory.printTrajectories()

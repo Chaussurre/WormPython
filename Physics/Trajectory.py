@@ -121,7 +121,7 @@ class Trajectory:
     def updateEvent(self, time):
         for key, event in list(self.events.items()):
             if key < time:
-                event()
+                event(self.physicObject)
                 self.events.pop(key)
 
 
