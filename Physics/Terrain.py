@@ -52,14 +52,13 @@ class Terrain:
         return result
 
     def draw(self, time):
-        for p in self.nodes:
+        pygame.draw.polygon(Globals.Screen, "blue", self.nodes[1::])
+
+        for p in self.nodes[1::]:
             pygame.draw.circle(Globals.Screen, "white", p, Globals.TerrainSize)
 
         for a, b in self.edges:
             pygame.draw.line(Globals.Screen, "white", self.nodes[a], self.nodes[b], Globals.TerrainSize * 2)
-
-        for t in self.triangles:
-            pygame.draw.polygon(Globals.Screen, "white", list(map(lambda x: self.nodes[x], t)))
 
         for zone in self.destroyedZones:
             pygame.draw.circle(Globals.Screen, "black", zone.position, zone.size)
@@ -203,7 +202,8 @@ def GenTerrain(genAlgo="block"):
 
 
 # terrain gen parameters
-numPoint = 30
+numPointUp = 15
+numPointDown = 5
 HorizontalVariance = 0.8, 1
 VerticalVariance = 0.1, 1
 
@@ -214,9 +214,11 @@ def genBlockTerrain():
     center = size / 2 + np.array((0, 100))
     terrain.addNode(center)
     last = None
-    for i in range(1, numPoint):
+    for i in range(1, numPointUp + numPointDown):
         var = random.uniform(*HorizontalVariance), random.uniform(*VerticalVariance)
-        angle = i / numPoint * 3.14 * 2
+        angle = i / numPointDown * 3.14
+        if i > numPointDown:
+            angle = (i - numPointDown) / numPointUp * 3.14 + 3.14
         point = np.array((np.cos(angle) * size[0] / 2 * var[0],
                           np.sin(angle) * size[1] / 2 * var[1]))
         terrain.addNode(point + center)
