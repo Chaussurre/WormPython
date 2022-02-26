@@ -30,6 +30,7 @@ class Button(UIElement):
         eventManager.triggerEvent(f"pressed {self.text.text}")
 
     def drawUI(self):
+        self.text.position = self.position - self.panel.size / 2
         if not self.visible:
             return
         if self.active:
