@@ -27,6 +27,12 @@ class PhysicObject(DynamicObject):
         if time <= self.aliveTimer:
             super().update(time)
 
+    def getVelocity(self, time):
+        if self.trajectory is None:
+            return np.array((0, 0))
+        else:
+            return self.trajectory.GetVelocity(time)
+
     def impulse(self, speed, time=0):
         if time < self.aliveTimer:
             self.trajectory = Trajectory(startPosition=self.position,

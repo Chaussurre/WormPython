@@ -34,10 +34,10 @@ class Trajectory:
                 return self.Next.GetVelocity(time)
             time = self.endTime
 
-        if time > self.startTime:
+        if time >= self.startTime:
             time -= self.startTime
         else:
-            time = self.startTime
+            return np.array((0, 0))
 
         return time * Globals.Gravity + self.startVelocity
 
@@ -91,7 +91,7 @@ class Trajectory:
                     newVel = reflectVelocityOnNormal(self.GetVelocity(time), normal) * Globals.Bounciness
                     self.endTime = time
 
-                    if np.linalg.norm(newVel, 2) > 5:
+                    if np.linalg.norm(newVel, 2) > 20:
                         self.impulseAt(newVel, time)
                         return True
                     if self.endTime < self.startTime + 0.2:

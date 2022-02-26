@@ -4,6 +4,7 @@ from EventManager.EventManager import eventManager
 from UI import UIGlobals
 from UI.Button import Button
 
+
 class WeaponButton(Button):
     def __init__(self, weapon, sizeFont=30):
         Button.__init__(self,
@@ -17,7 +18,6 @@ class WeaponButton(Button):
                         sizeFont=sizeFont)
         self.weapon = weapon
         UIGlobals.listWeaponButtons.append(self)
-
 
     def call(self):
         eventManager.triggerEvent(self.weapon.eventChoose, self.weapon)

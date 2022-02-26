@@ -1,16 +1,13 @@
-import numpy as np
 import pygame
 import pygame.gfxdraw
 
 import Globals
+from EventManager.EventManager import eventManager
+from GameLogic.TurnManager import TurnManager
 from Input import Input
-from Physics.Terrain import Terrain
-from TurnPhases.MoveWormPhase import MoveWormPhase
-from TurnPhases.RunSim import RunSim
-from TurnPhases.WeaponAimPhase import WeaponAimPhase
+from Physics.Terrain import GenTerrain
 from UI import UIGlobals
 from UI.UILayout import InitUI
-from Worm.Worm import Worm
 
 
 class GameManager:
@@ -18,43 +15,44 @@ class GameManager:
     def __init__(self):
         Globals.MainGame = self
         self.running = True
-        self.turnPhase = None
-        self.listWorms = []
-        self.focusedWorm = 0
+        self.TurnManager = TurnManager()
         pygame.init()
         Globals.Screen = pygame.display.set_mode(Globals.ScreenSize)
         pygame.display.set_caption("Best worm game", "")
         Globals.Screen.fill((0, 0, 0))
+        eventManager.addListener("quit", self.setGameOver)
 
     @property
     def movingWorm(self):
-        return self.listWorms[self.focusedWorm]
+        return self.TurnManager.movingWorm
 
     def main(self):
-        Globals.Terrain = self.createTerrain()
-        self.addWorm(position=np.array((150, 300)), team="green")
-        self.addWorm(position=np.array((350, 300)), team="yellow")
-        self.addWorm(position=np.array((450, 300)), team="green")
-        self.addWorm(position=np.array((650, 300)), team="yellow")
-
+        GenTerrain()
+        self.initWorms()
+        self.TurnManager.initTurn()
         clock = pygame.time.Clock()
-        self.turnPhase = RunSim()
         try:
-            while self.running and not self.isGameOver():
+            while self.running:
                 clock.tick(Globals.FrameRate)
                 self.updateEvents()
                 Globals.Screen.fill((0, 0, 0))
-                Globals.Terrain.draw()
                 self.playTurnPhase()
                 UIGlobals.RootUI.drawUI()
                 pygame.display.flip()
         finally:
             pygame.quit()
 
+    def initWorms(self):
+        self.TurnManager.createTeams("green", "yellow")
+        self.TurnManager.createWorms((250, 000),
+                                     (350, 000),
+                                     (450, 000),
+                                     (550, 000))
+
     def playTurnPhase(self):
-        if self.turnPhase is None:
+        if self.TurnManager is None:
             return
-        self.ChangePhase(self.turnPhase.update())
+        self.TurnManager.update()
 
     def updateEvents(self):
         Input.UpdateKeys()
@@ -68,51 +66,9 @@ class GameManager:
                 Input.SetKeyUp(event.key)
             event = pygame.event.poll()
 
-    def createTerrain(self):
-        terrain = Terrain()
-        terrain.addNode((100, 400))
-        terrain.addNode((700, 400))
-        terrain.link(0, 1)
-        return terrain
+    def setGameOver(self):
+        self.running = False
 
-    def ChangePhase(self, result):
-        if result is None:
-            return
-        phase, arg = result
-
-        self.clearDeadWorms()
-        if phase == "MoveWormPhase":
-            self.turnPhase = MoveWormPhase()
-        elif phase == "RunSim":
-            self.turnPhase = RunSim(arg)
-        elif phase == "WeaponAimPhase":
-            self.turnPhase = WeaponAimPhase(arg)
-        else:
-            print("do not know phase:", phase)
-
-    def addWorm(self, position, team="green"):
-        self.listWorms.append(Worm(position, team=team))
-
-    def removeWorm(self, worm):
-        index = self.listWorms.index(worm)
-        if self.focusedWorm > index:
-            self.focusedWorm -= 1
-        self.listWorms.remove(worm)
-        if self.focusedWorm < 0 or self.focusedWorm >= len(self.listWorms):
-            self.focusedWorm = 0
-
-    def ChangeTurn(self):
-        self.focusedWorm += 1
-        self.focusedWorm = self.focusedWorm % len(self.listWorms)
-
-    def clearDeadWorms(self):
-        for w in self.listWorms:
-            if w.isDead():
-                w.destroy()
-
-    def isGameOver(self):
-        team = self.movingWorm.team
-        return all(map(lambda x: x.team == team, self.listWorms))
 
 InitUI()
 GameManager().main()

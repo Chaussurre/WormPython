@@ -27,11 +27,11 @@ class Grenade(Projectile):
                                           startVelocity=speed,
                                           physicObject=self,
                                           startTime=time,
-                                          timer=Timer)
+                                          timer=self.aliveTimer)
 
     def predictActionAt(self, time):
-        if time > Timer:
-            self.explosion.detonateAt(time, self.trajectory.GetPoint(time))
+        if time > self.aliveTimer:
+            self.explosion.detonateAt(self.aliveTimer, self.trajectory.GetPoint(self.aliveTimer))
 
     def startPrediction(self):
         self.explosion.exploded = False

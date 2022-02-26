@@ -22,11 +22,9 @@ class MoveWormPhase:
         self.chosenWeapon = weapon
 
     def update(self):
+        Globals.Terrain.draw(0)
         if self.chosenWeapon is not None:
             return "WeaponAimPhase", self.chosenWeapon
-
-        if len(Globals.MainGame.listWorms) == 0:
-            return None
 
         for x in Globals.listDynamicObjects:
             x.update(0)
@@ -34,5 +32,5 @@ class MoveWormPhase:
         worm = Globals.MainGame.movingWorm
         if worm.inputMove():
             self.stopListen()
-            return "RunSim", None
+            return "RunSim",
         return None

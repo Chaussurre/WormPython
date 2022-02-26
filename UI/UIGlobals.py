@@ -9,5 +9,11 @@ weaponPanelPosition = (Globals.ScreenSize[0] - weaponPanelSize / 2 - weaponPanel
 weaponButtonsMargin = 20
 weaponButtonsSize = 40
 
+ammoCountSize = (50, 40)
+ammoCountPosition = (60, 40)
+
+IntroNewTurnUI = (None, None)
+IntroNewTurnSize = (530, 80)
+
 listWeaponButtons = []
 RootUI = UIElement()
