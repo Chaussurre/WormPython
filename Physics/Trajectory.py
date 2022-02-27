@@ -26,7 +26,7 @@ class Trajectory:
             return self.startPosition
         time -= self.startTime
 
-        return 0.5 * time * time * Globals.Gravity + self.startVelocity * time + self.startPosition
+        return 0.5 * time * time * (Globals.Gravity + Globals.Wind) + self.startVelocity * time + self.startPosition
 
     def GetVelocity(self, time):
         if time > self.endTime:

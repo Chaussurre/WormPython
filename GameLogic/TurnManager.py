@@ -87,6 +87,9 @@ class TurnManager:
         self.movingWorm.active = True
         self.nbActions = ActionPerTurn
         self.turnPhase = IntroNewTurn(self.Teams[self.playingTeam])
+        angle = random.uniform(0, 3.14 * 2)
+        strength = random.uniform(*Globals.WindVariance)
+        Globals.Wind = np.array((np.cos(angle), np.sin(angle))) * strength
 
     def createTeams(self, *colors):
         for color in colors:

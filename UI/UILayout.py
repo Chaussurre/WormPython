@@ -5,6 +5,7 @@ from UI import UIGlobals
 from UI.AmmoCount import AmmoCount
 from UI.Panel import Panel
 from UI.Text import Text
+from UI.WindIndicator import WindIndicator
 from Weapon.WeaponButton import WeaponButton
 from Weapon.WeaponList.WeaponList import listWeapons
 
@@ -37,3 +38,4 @@ def InitUI():
     introTurnPanel.visible = False
     UIGlobals.RootUI.addChild(introTurnPanel)
     UIGlobals.IntroNewTurnUI = (introTurnPanel, introTurnText)
+    WindIndicator()
